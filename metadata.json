@@ -1,0 +1,6 @@
+{
+  "name": "CII.IA® · Artificial Intelligence Execution Hub",
+  "description": "El primer ecosistema global privado que conecta la inteligencia artificial con el ámbito empresarial en México. De la idea y el piloto a la operación industrial.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --canvas: #0A0A0B;
+    --surface: #141518;
+    --surface-raised: #1D1F23;
+    --border: #26282D;
+    --divider: #42464E;
+    --text-primary: #FFFFFF;
+    --text-secondary: #D6D8DC;
+    --text-muted: #A8ACB3;
+    --accent: #5CA9DB;
+    --accent-sampled: #29729F;
+    --accent-surface: #0F2E42;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'Source Sans 3', sans-serif;
+    --font-mono: 'Source Code Pro', monospace;
+    --font-data: 'Aldrich', monospace;
+    --font-quote: 'Source Serif 4', serif;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  .font-mono-code {
+    font-family: var(--font-mono);
+  }
+
+  .font-data-numeric {
+    font-family: var(--font-data);
+  }
+
+  .font-quote-style {
+    font-family: var(--font-quote);
+  }
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0B;
+}
+::-webkit-scrollbar-thumb {
+  background: #26282D;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #42464E;
+}
+
+/* Utilities for precision grid and drawing */
+.grid-bg-subtle {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+}
+
+.glow-accent {
+  box-shadow: 0 0 25px -5px rgba(92, 169, 219, 0.25);
+}
+

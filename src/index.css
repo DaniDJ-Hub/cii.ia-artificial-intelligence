@@ -1,221 +1,140 @@
 @import "tailwindcss";
 
+/*
+ * CII.IA · sistema visual
+ *
+ * Base: ciiia.mx/brandguide. Azul marino como color de poder, tonos fríos,
+ * títulos siempre en mayúsculas, familia Source para texto y datos, Aldrich
+ * solo para cifras.
+ *
+ * Bw Aleta, la tipografía de títulos de la marca, es de licencia. Cuando el
+ * archivo esté disponible se declara con @font-face y toma prioridad; mientras
+ * tanto se usa Archivo en ancho expandido.
+ */
+
+@theme {
+  --color-paper: #eef1f3;
+  --color-surface: #ffffff;
+  --color-ink: #0e1a24;
+  --color-graphite: #56626c;
+  --color-rule: #cbd3d9;
+  --color-navy: #0b2a43;
+  --color-navy-deep: #071d2f;
+  --color-steel: #29729f;
+  --color-sky: #5ca9db;
+  --color-mist: #a9c3d4;
+
+  --font-display: "Bw Aleta", "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Source Code Pro", ui-monospace, monospace;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-figure: "Aldrich", "Archivo", ui-sans-serif, sans-serif;
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
 @layer base {
-  :root {
-    --canvas: #0A0A0B;
-    --surface: #141518;
-    --surface-raised: #1D1F23;
-    --border: #26282D;
-    --divider: #42464E;
-    --text-primary: #FFFFFF;
-    --text-secondary: #D6D8DC;
-    --text-muted: #A8ACB3;
-    --accent: #5CA9DB;
-    --accent-sampled: #29729F;
-    --accent-surface: #0F2E42;
-    --font-display: 'Syne', sans-serif;
-    --font-body: 'Source Sans 3', sans-serif;
-    --font-mono: 'Source Code Pro', monospace;
-    --font-data: 'Aldrich', monospace;
-    --font-quote: 'Source Serif 4', serif;
+  html {
+    background-color: var(--color-paper);
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    /* El encabezado es sticky: evita que tape el elemento enfocado o el ancla. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  a,
+  button,
+  input,
+  label,
+  textarea {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
-    background-color: var(--canvas);
-    color: var(--text-primary);
-    font-family: var(--font-body);
-    font-size: 16px;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
     line-height: 1.6;
-    overflow-x: hidden;
+    /* Las transformaciones 3D nunca deben generar scroll horizontal. */
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, .font-display {
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-sky);
+    color: var(--color-navy-deep);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-steel);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .container-site {
+    width: 100%;
+    max-width: 88rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+
+  /* Título de marca: siempre en mayúsculas. En pantallas angostas se usa el
+     ancho normal para que las palabras largas no desborden. */
+  .display {
     font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 100%;
+    letter-spacing: -0.012em;
+    line-height: 0.96;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 40rem) {
+    .display {
+      font-stretch: 116%;
+    }
+  }
+
+  .figure {
+    font-family: var(--font-figure);
+    font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
   }
 
-  .font-mono-code {
-    font-family: var(--font-mono);
+  .brand-dot {
+    color: var(--color-steel);
   }
 
-  .font-data-numeric {
-    font-family: var(--font-data);
+  [data-tone="navy"] .brand-dot {
+    color: var(--color-sky);
   }
 
-  .font-quote-style {
-    font-family: var(--font-quote);
+  [data-tone="navy"] :focus-visible {
+    outline-color: var(--color-sky);
   }
-}
-
-/* Custom subtle scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #0A0A0B;
-}
-::-webkit-scrollbar-thumb {
-  background: #26282D;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #42464E;
-}
-
-/* Utilities for precision grid and drawing */
-.grid-bg-subtle {
-  background-size: 32px 32px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-}
-
-.glow-accent {
-  box-shadow: 0 0 25px -5px rgba(92, 169, 219, 0.25);
-}
-
-/* ============================================================
-   Design System: Glass / 3D Depth / Glow
-   Shared surfaces so every section reads as one cohesive system.
-   Wrapped in @layer utilities so it plays nicely with Tailwind's
-   own variants (focus:, hover:, group-hover:) at matching specificity.
-   ============================================================ */
-@layer utilities {
-
-/* Base glass surface: translucent + blurred + soft inner highlight */
-.glass-panel {
-  position: relative;
-  background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 40%),
-    rgba(20, 21, 24, 0.6);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
-    0 24px 48px -20px rgba(0, 0, 0, 0.65),
-    0 2px 8px -2px rgba(0, 0, 0, 0.5);
-}
-
-/* Stronger, more opaque glass for chrome (nav, modals, floating bars) */
-.glass-panel-strong {
-  position: relative;
-  background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 45%),
-    rgba(10, 10, 11, 0.78);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  backdrop-filter: blur(24px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.07) inset,
-    0 20px 40px -18px rgba(0, 0, 0, 0.7);
-}
-
-/* Interactive glass card: lifts + glows + brightens border on hover */
-.glass-card {
-  position: relative;
-  background:
-    linear-gradient(155deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0) 40%),
-    rgba(20, 21, 24, 0.6);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  backdrop-filter: blur(16px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.05) inset,
-    0 16px 32px -18px rgba(0, 0, 0, 0.6);
-  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1),
-    box-shadow 0.4s cubic-bezier(0.19, 1, 0.22, 1),
-    border-color 0.4s ease,
-    background 0.4s ease;
-  will-change: transform;
-}
-
-@media (hover: hover) {
-  .glass-card:hover {
-    transform: translateY(-6px) translateZ(0);
-    border-color: rgba(92, 169, 219, 0.45);
-    background:
-      linear-gradient(155deg, rgba(92, 169, 219, 0.08), rgba(255, 255, 255, 0) 50%),
-      rgba(20, 21, 24, 0.68);
-    box-shadow:
-      0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
-      0 0 0 1px rgba(92, 169, 219, 0.12),
-      0 30px 60px -22px rgba(0, 0, 0, 0.75),
-      0 0 40px -8px rgba(92, 169, 219, 0.3);
-  }
-}
-
-/* Glow accents, layered for real depth rather than a flat halo */
-.glow-accent-sm {
-  box-shadow: 0 0 16px -4px rgba(92, 169, 219, 0.35);
-}
-.glow-accent-lg {
-  box-shadow:
-    0 0 60px -12px rgba(92, 169, 219, 0.35),
-    0 0 120px -30px rgba(92, 169, 219, 0.25);
-}
-.glow-text-accent {
-  text-shadow: 0 0 24px rgba(92, 169, 219, 0.45);
-}
-
-/* Radial ambient glow blobs used as background depth cues (not gradient blobs UI) */
-.ambient-glow {
-  pointer-events: none;
-  position: absolute;
-  border-radius: 9999px;
-  background: radial-gradient(circle, rgba(92, 169, 219, 0.22) 0%, rgba(92, 169, 219, 0) 70%);
-  filter: blur(20px);
-}
-
-/* 3D perspective helpers */
-.perspective-container {
-  perspective: 1400px;
-}
-.preserve-3d {
-  transform-style: preserve-3d;
-}
-
-/* Tasteful static tilt-on-hover for elements not using JS pointer tracking */
-.tilt-hover {
-  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.5s ease;
-  transform: perspective(1200px) rotateX(0deg) rotateY(0deg) translateZ(0);
-}
-@media (hover: hover) {
-  .tilt-hover:hover {
-    transform: perspective(1200px) rotateX(3deg) rotateY(-4deg) translateY(-4px) translateZ(0);
-  }
-}
-
-/* Lightweight glass treatment for small inline chips/badges/tags */
-.glass-chip {
-  background: rgba(10, 10, 11, 0.55);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Section divider glow line instead of flat borders */
-.divider-glow {
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(92, 169, 219, 0.35),
-    transparent
-  );
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .glass-card,
-  .tilt-hover {
-    transition: none !important;
-  }
-  .glass-card:hover,
-  .tilt-hover:hover {
-    transform: none !important;
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
-
-} /* end @layer utilities */
-

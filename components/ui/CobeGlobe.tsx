@@ -7,13 +7,38 @@ export interface CobeGlobeMarker {
   size: number;
 }
 
+type Rgb = [number, number, number];
+
 export interface CobeGlobeProps {
   className?: string;
   markers?: CobeGlobeMarker[];
   size?: number;
+  /** 1 = globo oscuro (valor original del kit), 0 = versión para fondos claros. */
+  dark?: number;
+  baseColor?: Rgb;
+  markerColor?: Rgb;
+  glowColor?: Rgb;
+  mapSamples?: number;
+  mapBrightness?: number;
+  diffuse?: number;
 }
 
-export const CobeGlobe = ({ className, markers, size = 560 }: CobeGlobeProps) => {
+const DEFAULT_BASE: Rgb = [0.1, 0.15, 0.2];
+const DEFAULT_MARKER: Rgb = [92 / 255, 169 / 255, 219 / 255];
+const DEFAULT_GLOW: Rgb = [0.36, 0.66, 0.86];
+
+export const CobeGlobe = ({
+  className,
+  markers,
+  size = 560,
+  dark = 1,
+  baseColor = DEFAULT_BASE,
+  markerColor = DEFAULT_MARKER,
+  glowColor = DEFAULT_GLOW,
+  mapSamples = 3500,
+  mapBrightness = 5,
+  diffuse = 1.2,
+}: CobeGlobeProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -27,13 +52,13 @@ export const CobeGlobe = ({ className, markers, size = 560 }: CobeGlobeProps) =>
       height: size * 2,
       phi: 0,
       theta: 0.3,
-      dark: 1,
-      diffuse: 1.2,
-      mapSamples: 3500,
-      mapBrightness: 5,
-      baseColor: [0.1, 0.15, 0.2],
-      markerColor: [92 / 255, 169 / 255, 219 / 255],
-      glowColor: [0.36, 0.66, 0.86],
+      dark,
+      diffuse,
+      mapSamples,
+      mapBrightness,
+      baseColor,
+      markerColor,
+      glowColor,
       markers: markers ?? [
         { location: [25.6866, -100.3161], size: 0.1 }, // Monterrey
         { location: [19.4326, -99.1332], size: 0.05 }, // CDMX
@@ -54,7 +79,9 @@ export const CobeGlobe = ({ className, markers, size = 560 }: CobeGlobeProps) =>
       cancelAnimationFrame(raf);
       globe.destroy();
     };
-  }, [markers, size]);
+    // Los colores se leen al crear el globo; pasar constantes para no recrearlo.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [markers, size, dark, mapSamples]);
 
   return (
     <canvas

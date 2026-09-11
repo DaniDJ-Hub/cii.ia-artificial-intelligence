@@ -92,10 +92,10 @@ export const CORE_METRICS: MetricItem[] = [
  * serían más potentes, pero hoy no existen públicamente.
  * ------------------------------------------------------------------------- */
 export const INSTITUTIONAL_METRICS = [
-  { id: 'i1', value: 12, suffix: '', label: 'SOLUCIONES DOCUMENTADAS' },
-  { id: 'i2', value: 50, suffix: '+', label: 'ORGANIZACIONES ALIADAS' },
-  { id: 'i3', value: 5, suffix: '', label: 'SOCIOS FUNDADORES' },
-  { id: 'i4', value: 2021, suffix: '', label: 'EN EL PIIT, NUEVO LEÓN' }
+  { id: 'i1', value: 12, suffix: '', label: 'Soluciones documentadas' },
+  { id: 'i2', value: 50, suffix: '+', label: 'Organizaciones aliadas' },
+  { id: 'i3', value: 5, suffix: '', label: 'Socios fundadores' },
+  { id: 'i4', value: 2021, suffix: '', label: 'Inauguración en el PIIT, Nuevo León' }
 ];
 
 /* ---------------------------------------------------------------------------
@@ -267,7 +267,9 @@ export const SERVICES_DATA: ServiceItem[] = [
     startingPrice: 'Certificación NVIDIA DLI desde MXN $7,950',
     stageMapping: ['desplegar', 'escalar'],
     // PENDIENTE_R14: el catálogo vigente en ciiia.mx tiene un solo curso activo.
-    technicalSpecs: ['NVIDIA DLI', 'Programas ejecutivos', 'Programas corporativos']
+    technicalSpecs: ['NVIDIA DLI', 'Programas ejecutivos', 'Programas corporativos'],
+    // Fuente: [WEB] ciiia.mx/nvidia, página vigente de la certificación.
+    externalLink: { label: 'Certificación NVIDIA DLI en ciiia.mx', href: 'https://ciiia.mx/nvidia' }
   },
   {
     id: 'hiva',
@@ -642,6 +644,44 @@ export const INDUSTRIAL_SECTORS = [
   { id: 'financiero', name: 'Servicios Financieros', casesCount: 1, highlight: 'Detección temprana de deterioro de cartera' },
   { id: 'publico', name: 'Seguridad Pública', casesCount: 1, highlight: 'Análisis y pronóstico de incidencia delictiva' }
 ];
+
+/* ---------------------------------------------------------------------------
+ * CASO DESTACADO
+ * Fuente: [DECK] Ejecutiva 2030 v1.06, lámina «CII.IA in action».
+ * Las cuatro cifras pertenecen al mismo despliegue (caso-01). La de tiempo
+ * improductivo ya estaba en CORE_METRICS (m3.subtext) y en caso-01.outcome.
+ * ------------------------------------------------------------------------- */
+export const FEATURED_CASE_ID = 'caso-01';
+
+export const FEATURED_CASE_METRICS = [
+  { value: '-55%', label: 'Paros de línea' },
+  { value: '-60%', label: 'Tiempo de inspección' },
+  { value: '-30%', label: 'Desperdicio' },
+  { value: '-28%', label: 'Tiempo improductivo' }
+];
+
+/* ---------------------------------------------------------------------------
+ * CONTACTO
+ * Fuente: [WEB] ciiia.mx/contacto, consultado el 11/09/2026.
+ * PENDIENTE: dirección postal completa de la sede. No se publica una calle
+ * sin que el CII.IA la confirme.
+ * PENDIENTE: aviso de privacidad. El formulario no debe conectarse a un
+ * servicio que almacene datos hasta que exista.
+ * ------------------------------------------------------------------------- */
+export const CONTACT_INFO = {
+  email: 'contacto@ciiia.mx',
+  phoneDisplay: '+52 81 2000 2127',
+  phoneHref: 'tel:+528120002127',
+  location: 'Parque de Investigación e Innovación Tecnológica (PIIT), Apodaca, Nuevo León',
+  social: [
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/company/cii-ia/' },
+    { label: 'Facebook', href: 'https://www.facebook.com/CII.IA1/' },
+    { label: 'YouTube', href: 'https://www.youtube.com/channel/UCz3SuYojOMFFs5re1oMRiBg' }
+  ]
+};
+
+/** Fuente: [WEB] ciiia.mx, portada. */
+export const TAGLINE = 'Global Solutions delivered Locally';
 
 /* ---------------------------------------------------------------------------
  * NOTA FINAL

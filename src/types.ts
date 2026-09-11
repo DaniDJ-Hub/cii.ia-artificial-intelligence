@@ -1,14 +1,3 @@
-export type NavigationPage = 
-  | 'home' 
-  | 'ai-execution' 
-  | 'ai-lab' 
-  | 'academy' 
-  | 'casos' 
-  | 'ecosistema' 
-  | 'contacto';
-
-export type HeroConceptId = 'A' | 'B' | 'C';
-
 export interface MetricItem {
   id: string;
   value: string;
@@ -50,6 +39,7 @@ export interface ServiceItem {
   startingPrice: string;
   stageMapping: string[];
   technicalSpecs: string[];
+  externalLink?: { label: string; href: string };
 }
 
 export interface ProjectCase {

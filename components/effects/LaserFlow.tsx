@@ -351,7 +351,8 @@ export const LaserFlow: React.FC<Props> = ({
     mesh.frustumCulled = false;
     scene.add(mesh);
 
-    const clock = new THREE.Clock();
+    // THREE.Clock está deprecado desde three r18x; el tiempo transcurrido basta.
+    const startTime = performance.now();
     let prevTime = 0;
     let fade = hasFadedRef.current ? 1 : 0;
     const mouseTarget = new THREE.Vector2(0, 0);
@@ -427,7 +428,7 @@ export const LaserFlow: React.FC<Props> = ({
     const animate = () => {
       raf = requestAnimationFrame(animate);
       if (pausedRef.current || !inViewRef.current) return;
-      const t = clock.getElapsedTime();
+      const t = (performance.now() - startTime) / 1000;
       const dt = Math.max(0, t - prevTime);
       prevTime = t;
       uniforms.iTime.value = t;

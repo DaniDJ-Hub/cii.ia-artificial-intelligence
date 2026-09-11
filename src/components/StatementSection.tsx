@@ -1,20 +1,35 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Building2, MapPin, Award, CheckCircle2 } from 'lucide-react';
+import DepthText from '../../components/ui/DepthText';
+
+const CursorGrid = lazy(() => import('../../components/effects/CursorGrid'));
 
 export const StatementSection: React.FC = () => {
   return (
-    <section 
+    <section
       id="ciia"
-      className="py-20 sm:py-28 bg-[#0A0A0B] border-b border-[#26282D] relative overflow-hidden"
+      className="py-20 sm:py-28 bg-[#0A0A0B] relative overflow-hidden perspective-container"
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        
+      <div className="absolute top-0 left-0 right-0 divider-glow" />
+      {/* Ambient interactive grid: precision lattice that lights up on hover */}
+      <div className="pointer-events-none absolute inset-0">
+        <Suspense fallback={null}>
+          <CursorGrid cellSize={72} color="#5CA9DB" radius={160} maxOpacity={0.4} gridOpacity={0.04} />
+        </Suspense>
+      </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+
         {/* Section Pill */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#141518] border border-[#26282D] mb-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-[#5CA9DB]" />
           <span className="text-[11px] font-mono tracking-widest text-[#5CA9DB] font-semibold uppercase">
             QUÉ ES EL CII.IA
           </span>
+        </div>
+
+        {/* 3D depth-layered wordmark */}
+        <div className="mb-8 flex justify-center">
+          <DepthText text="CII.IA" fontSize="clamp(2.75rem, 9vw, 5.5rem)" depthColor="#5CA9DB" faceColor="#ffffff" />
         </div>
 
         {/* Clean Editorial Manifesto */}
@@ -30,7 +45,7 @@ export const StatementSection: React.FC = () => {
 
         {/* 3 Core Pillars */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left mb-10">
-          <div className="p-6 rounded-xl bg-[#141518] border border-[#26282D]">
+          <div className="p-6 rounded-xl glass-panel tilt-hover">
             <div className="text-xs font-mono text-[#5CA9DB] font-bold mb-2">INFRAESTRUCTURA FÍSICA</div>
             <h3 className="font-display text-base font-bold text-white uppercase mb-2">
               AI Lab en el PIIT
@@ -40,7 +55,7 @@ export const StatementSection: React.FC = () => {
             </p>
           </div>
 
-          <div className="p-6 rounded-xl bg-[#141518] border border-[#26282D]">
+          <div className="p-6 rounded-xl glass-panel tilt-hover">
             <div className="text-xs font-mono text-[#5CA9DB] font-bold mb-2">RESPALDO INSTITUCIONAL</div>
             <h3 className="font-display text-base font-bold text-white uppercase mb-2">
               Consorcio Triple Hélice
@@ -50,7 +65,7 @@ export const StatementSection: React.FC = () => {
             </p>
           </div>
 
-          <div className="p-6 rounded-xl bg-[#141518] border border-[#26282D]">
+          <div className="p-6 rounded-xl glass-panel tilt-hover">
             <div className="text-xs font-mono text-[#5CA9DB] font-bold mb-2">GOBERNANZA & RIGOR</div>
             <h3 className="font-display text-base font-bold text-white uppercase mb-2">
               Norma ISO/IEC 42001
@@ -62,7 +77,7 @@ export const StatementSection: React.FC = () => {
         </div>
 
         {/* Location & Tagline */}
-        <div className="pt-6 border-t border-[#26282D] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#A8ACB3]">
+        <div className="pt-6 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#A8ACB3]">
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-[#5CA9DB]" />
             <span>PIIT Monterrey: Autopista al Aeropuerto Km 9.5, Apodaca N.L.</span>

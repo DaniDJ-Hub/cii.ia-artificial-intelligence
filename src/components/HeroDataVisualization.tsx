@@ -71,10 +71,10 @@ export const HeroDataVisualization: React.FC = () => {
     <div 
       ref={containerRef}
       id="hero-data-visualization"
-      className="relative w-full rounded-lg border border-[#26282D] bg-[#141518]/90 backdrop-blur-sm p-5 shadow-2xl overflow-hidden"
+      className="relative w-full rounded-lg border border-white/[0.08] bg-[#141518]/90 backdrop-blur-sm p-5 shadow-2xl overflow-hidden"
     >
       {/* Structural technical header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#26282D] pb-3 mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-3 mb-4">
         <div className="flex items-center gap-2.5">
           <div className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#5CA9DB] opacity-75"></span>
@@ -96,7 +96,7 @@ export const HeroDataVisualization: React.FC = () => {
         </div>
 
         {/* Channel selectors */}
-        <div className="flex items-center gap-1 bg-[#0A0A0B] p-1 rounded border border-[#26282D]">
+        <div className="flex items-center gap-1 bg-[#0A0A0B] p-1 rounded border border-white/[0.08]">
           <button
             onClick={() => setActiveChannel('vibration')}
             className={`px-2.5 py-1 text-[11px] font-mono rounded transition-colors ${
@@ -277,8 +277,8 @@ export const HeroDataVisualization: React.FC = () => {
         </svg>
 
         {/* Interactive telemetry readout strip */}
-        <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-[#26282D] text-left">
-          <div className="bg-[#0A0A0B] p-2.5 rounded border border-[#26282D]">
+        <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-white/[0.08] text-left">
+          <div className="bg-[#0A0A0B] p-2.5 rounded border border-white/[0.08]">
             <div className="text-[10px] font-mono text-[#A8ACB3] uppercase">Aceleración RMS</div>
             <div className="text-lg font-mono text-white font-semibold flex items-baseline gap-1">
               <span className="font-data-numeric text-[#5CA9DB]">{activePoint.val.toFixed(1)}</span>
@@ -286,7 +286,7 @@ export const HeroDataVisualization: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-[#0A0A0B] p-2.5 rounded border border-[#26282D]">
+          <div className="bg-[#0A0A0B] p-2.5 rounded border border-white/[0.08]">
             <div className="text-[10px] font-mono text-[#A8ACB3] uppercase">Temp. Rodamiento</div>
             <div className="text-lg font-mono text-white font-semibold flex items-baseline gap-1">
               <span className="font-data-numeric text-white">{activePoint.temp.toFixed(1)}</span>
@@ -294,7 +294,7 @@ export const HeroDataVisualization: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-[#0A0A0B] p-2.5 rounded border border-[#26282D]">
+          <div className="bg-[#0A0A0B] p-2.5 rounded border border-white/[0.08]">
             <div className="text-[10px] font-mono text-[#A8ACB3] uppercase">Diagnóstico ML</div>
             <div className="text-xs font-mono text-white font-medium truncate mt-1">
               {activePoint.isAnomaly ? (
@@ -309,7 +309,7 @@ export const HeroDataVisualization: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-[#0A0A0B] p-2.5 rounded border border-[#26282D]">
+          <div className="bg-[#0A0A0B] p-2.5 rounded border border-white/[0.08]">
             <div className="text-[10px] font-mono text-[#A8ACB3] uppercase">Horizonte de Falla</div>
             <div className="text-lg font-mono text-white font-semibold flex items-baseline gap-1">
               <span className="font-data-numeric text-[#8CC6EC]">14</span>

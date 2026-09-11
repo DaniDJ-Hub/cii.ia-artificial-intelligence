@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { EXECUTION_STAGES } from '../data/ciiiaData';
 import { ArrowRight, CheckCircle2, ChevronRight, Cpu, Layers, HardDrive, ShieldCheck } from 'lucide-react';
+import Stepper, { Step } from '../../components/ui/Stepper';
 
 interface ExecutionCycleSectionProps {
   onSelectService: (serviceId: string) => void;
@@ -14,13 +15,14 @@ export const ExecutionCycleSection: React.FC<ExecutionCycleSectionProps> = ({ on
   return (
     <section 
       id="capacidades"
-      className="py-20 sm:py-28 bg-[#141518] border-b border-[#26282D] relative"
+      className="py-20 sm:py-28 bg-[#141518] relative"
     >
+      <div className="absolute top-0 left-0 right-0 divider-glow" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="max-w-3xl text-left mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A0A0B] border border-[#26282D] mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-chip mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-[#5CA9DB]" />
             <span className="text-[11px] font-mono tracking-widest text-[#5CA9DB] uppercase font-semibold">
               CAPACIDADES & METODOLOGÍA
@@ -46,9 +48,9 @@ export const ExecutionCycleSection: React.FC<ExecutionCycleSectionProps> = ({ on
                 key={stage.id}
                 onClick={() => setActiveStageId(stage.id)}
                 className={`p-4 rounded-xl text-left transition-all duration-200 border flex flex-col justify-between ${
-                  isActive 
-                    ? 'bg-[#0A0A0B] border-[#5CA9DB] shadow-[0_0_25px_-5px_rgba(92,169,219,0.35)] -translate-y-0.5' 
-                    : 'bg-[#0A0A0B]/60 border-[#26282D] hover:border-[#42464E]'
+                  isActive
+                    ? 'glass-chip !border-[#5CA9DB] glow-accent-sm -translate-y-0.5'
+                    : 'bg-[#0A0A0B]/60 border-white/[0.08] hover:border-[#42464E]'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -72,7 +74,7 @@ export const ExecutionCycleSection: React.FC<ExecutionCycleSectionProps> = ({ on
         </div>
 
         {/* Dynamic Detail Card for Active Stage */}
-        <div className="p-8 sm:p-10 rounded-xl bg-[#0A0A0B] border border-[#26282D] text-left transition-all">
+        <div className="p-8 sm:p-10 rounded-xl glass-chip text-left transition-all">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             <div className="lg:col-span-8">
@@ -97,7 +99,7 @@ export const ExecutionCycleSection: React.FC<ExecutionCycleSectionProps> = ({ on
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono text-white">
                   {activeStage.products.map((act, i) => (
-                    <div key={i} className="flex items-center gap-2 p-2 rounded bg-[#141518] border border-[#26282D]">
+                    <div key={i} className="flex items-center gap-2 p-2 rounded glass-panel">
                       <CheckCircle2 className="w-4 h-4 text-[#5CA9DB] shrink-0" />
                       <span>{act}</span>
                     </div>
@@ -107,7 +109,7 @@ export const ExecutionCycleSection: React.FC<ExecutionCycleSectionProps> = ({ on
             </div>
 
             {/* Right Meta Column */}
-            <div className="lg:col-span-4 p-6 rounded-xl bg-[#141518] border border-[#26282D] space-y-4">
+            <div className="lg:col-span-4 p-6 rounded-xl glass-panel space-y-4">
               <div>
                 <div className="text-[10px] font-mono text-[#6E737C] uppercase">ENTORNO DE VALIDACIÓN</div>
                 <div className="text-xs font-mono text-white font-semibold mt-1">
@@ -117,14 +119,14 @@ export const ExecutionCycleSection: React.FC<ExecutionCycleSectionProps> = ({ on
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#26282D]">
+              <div className="pt-4 border-t border-white/[0.08]">
                 <div className="text-[10px] font-mono text-[#6E737C] uppercase">NORMA DE CUMPLIMIENTO</div>
                 <div className="text-xs font-mono text-emerald-400 font-semibold mt-1">
                   ISO/IEC 42001 & Seguridad Industrial
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#26282D]">
+              <div className="pt-4 border-t border-white/[0.08]">
                 <button
                   onClick={() => onSelectService(activeStage.id)}
                   className="w-full py-2.5 bg-[#1D1F23] hover:bg-[#5CA9DB] hover:text-[#0A0A0B] text-white text-xs font-mono font-bold rounded transition-colors flex items-center justify-center gap-1.5 uppercase"
@@ -136,6 +138,32 @@ export const ExecutionCycleSection: React.FC<ExecutionCycleSectionProps> = ({ on
             </div>
 
           </div>
+        </div>
+
+        {/* Guided walkthrough: same 5 stages as a step-by-step interactive journey */}
+        <div className="mt-16">
+          <div className="text-xs font-mono text-[#A8ACB3] uppercase font-semibold mb-4 text-left">
+            RECORRE LA METODOLOGÍA PASO A PASO
+          </div>
+          <Stepper
+            initialStep={1}
+            backButtonText="Anterior"
+            nextButtonText="Siguiente etapa"
+            onStepChange={(step) => {
+              const stage = EXECUTION_STAGES[step - 1];
+              if (stage) setActiveStageId(stage.id);
+            }}
+          >
+            {EXECUTION_STAGES.map((stage) => (
+              <Step key={stage.id}>
+                <div className="text-xs font-mono text-[#5CA9DB] font-semibold uppercase mb-2">
+                  ETAPA {stage.number} · {stage.focus}
+                </div>
+                <h4 className="font-display text-xl font-bold text-white uppercase mb-3">{stage.name}</h4>
+                <p className="text-sm text-[#D6D8DC] leading-relaxed">{stage.description}</p>
+              </Step>
+            ))}
+          </Stepper>
         </div>
 
       </div>

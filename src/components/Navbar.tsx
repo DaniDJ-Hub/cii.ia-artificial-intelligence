@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { CiiiaLogo } from './CiiiaLogo';
 import { NavigationPage } from '../types';
+import { GooeyInput } from '../../components/ui/GooeyInput';
 import { 
   ChevronDown, 
   Menu, 
@@ -41,9 +43,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header 
       id="main-navbar"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-[#0A0A0B]/95 backdrop-blur-md border-b border-[#26282D] py-3.5 shadow-2xl' 
-          : 'bg-gradient-to-b from-[#0A0A0B]/90 to-transparent py-5'
+        isScrolled
+          ? 'glass-panel-strong py-3.5'
+          : 'bg-gradient-to-b from-[#0A0A0B]/90 to-transparent py-5 border-b border-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,7 +59,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <CiiiaLogo size="md" />
             </button>
-            <div className="hidden xl:inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#141518] border border-[#26282D] text-[11px] font-mono text-[#A8ACB3]">
+            <div className="hidden xl:inline-flex items-center gap-2 px-2.5 py-1 rounded glass-panel text-[11px] font-mono text-[#A8ACB3]">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>PARQUE PIIT · MONTERREY, MÉXICO</span>
             </div>
@@ -81,8 +83,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <ChevronDown className="w-3.5 h-3.5 text-[#A8ACB3]" />
               </button>
 
+              <AnimatePresence>
               {servicesDropdownOpen && (
-                <div className="absolute top-full left-0 w-80 bg-[#141518] border border-[#26282D] rounded-xl shadow-2xl p-2.5 z-50 text-left backdrop-blur-xl animate-in fade-in slide-in-from-top-1 duration-150">
+                <motion.div
+                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                  transition={{ duration: 0.18, ease: [0.19, 1, 0.22, 1] }}
+                  className="absolute top-full left-0 w-80 mt-2 glass-panel-strong glow-accent-sm rounded-xl p-2.5 z-50 text-left"
+                >
                   <button
                     onClick={() => { onNavigate('ai-execution'); setServicesDropdownOpen(false); }}
                     className="w-full text-left p-3 rounded-lg hover:bg-[#1D1F23] transition-colors group"
@@ -108,7 +117,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <HardDrive className="w-3.5 h-3.5 text-[#5CA9DB]" />
                         AI LAB & PROTOTIPADO
                       </span>
-                      <span className="text-[9px] bg-[#141518] border border-[#26282D] text-[#A8ACB3] px-1.5 py-0.5 rounded font-mono">PIIT</span>
+                      <span className="text-[9px] glass-panel text-[#A8ACB3] px-1.5 py-0.5 rounded font-mono">PIIT</span>
                     </div>
                     <div className="text-[11px] text-[#A8ACB3] font-sans mt-1 leading-snug">
                       Celda robótica Fanuc/UR, drones con LiDAR y clusters NVIDIA.
@@ -130,8 +139,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                       Certificaciones oficiales y formación técnica para ingeniería.
                     </div>
                   </button>
-                </div>
+                </motion.div>
               )}
+              </AnimatePresence>
             </div>
 
             <button 
@@ -162,10 +172,27 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </nav>
 
-          {/* Right Action Tools: Language + Primary CTA */}
+          {/* Right Action Tools: Search + Language + Primary CTA */}
           <div className="flex items-center gap-3">
+            {/* Quick site search */}
+            <div className="hidden md:block">
+              <GooeyInput
+                placeholder="Buscar: lab, casos, academy…"
+                collapsedWidth={40}
+                expandedWidth={230}
+                onValueChange={(value) => {
+                  const q = value.toLowerCase();
+                  if (!q) return;
+                  if (q.includes('lab') || q.includes('prototip')) onNavigate('ai-lab');
+                  else if (q.includes('caso') || q.includes('éxito') || q.includes('exito')) onNavigate('casos');
+                  else if (q.includes('academ') || q.includes('nvidia') || q.includes('dli')) onNavigate('academy');
+                  else if (q.includes('ecosist') || q.includes('alian') || q.includes('socio')) onNavigate('ecosistema');
+                  else if (q.includes('execution') || q.includes('solucion')) onNavigate('ai-execution');
+                }}
+              />
+            </div>
             {/* Language toggle */}
-            <div className="hidden sm:flex items-center bg-[#141518] rounded border border-[#26282D] text-[11px] font-mono p-0.5">
+            <div className="hidden sm:flex items-center glass-chip rounded text-[11px] font-mono p-0.5">
               <button 
                 onClick={() => setCurrentLang('ES')}
                 className={`px-2 py-0.5 rounded transition-colors ${
@@ -188,7 +215,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               id="navbar-primary-cta"
               onClick={onOpenContact}
-              className="h-10 sm:h-11 px-4 sm:px-5 rounded bg-[#5CA9DB] hover:bg-[#8CC6EC] text-[#0A0A0B] text-xs font-mono font-bold tracking-wider uppercase transition-all duration-150 flex items-center gap-2 shadow-[0_0_20px_-5px_rgba(92,169,219,0.5)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white active:scale-95"
+              className="h-10 sm:h-11 px-4 sm:px-5 rounded bg-[#5CA9DB] hover:bg-[#8CC6EC] text-[#0A0A0B] text-xs font-mono font-bold tracking-wider uppercase transition-all duration-150 flex items-center gap-2 glow-accent-lg hover:scale-[1.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-white active:scale-95"
             >
               <span>AGENDAR SESIÓN</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -207,8 +234,15 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Mobile Menu Panel */}
+      <AnimatePresence>
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#0A0A0B]/98 border-b border-[#26282D] px-6 py-6 text-left space-y-4 shadow-2xl backdrop-blur-xl animate-in fade-in duration-200">
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.25, ease: [0.19, 1, 0.22, 1] }}
+          className="lg:hidden glass-panel-strong px-6 py-6 text-left space-y-4 overflow-hidden"
+        >
           <div className="space-y-1">
             <button
               onClick={() => { onNavigate('home'); setMobileMenuOpen(false); }}
@@ -260,7 +294,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          <div className="pt-4 border-t border-[#26282D] flex items-center justify-between">
+          <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs font-mono text-[#A8ACB3]">
               <Globe className="w-4 h-4 text-[#5CA9DB]" />
               <button 
@@ -285,8 +319,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               AGENDAR SESIÓN
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </header>
   );
 };

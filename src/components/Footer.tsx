@@ -2,6 +2,14 @@ import React from 'react';
 import { CiiiaLogo } from './CiiiaLogo';
 import { NavigationPage } from '../types';
 import { MapPin, Mail, Phone, ExternalLink, Shield } from 'lucide-react';
+import CobeGlobe from '../../components/ui/CobeGlobe';
+import FlowingMenu from '../../components/ui/FlowingMenu';
+
+const MONOCHROME_TILE =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100"><rect width="200" height="100" fill="#0F2E42"/><circle cx="100" cy="50" r="30" fill="#5CA9DB"/></svg>',
+  );
 
 interface FooterProps {
   onNavigate: (page: NavigationPage) => void;
@@ -10,11 +18,17 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenContact }) => {
   return (
-    <footer className="bg-[#0A0A0B] border-t border-[#26282D] pt-16 pb-12 text-left">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#26282D]">
+    <footer className="relative bg-[#0A0A0B] pt-16 pb-12 text-left overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 divider-glow" />
+      <div className="ambient-glow -bottom-40 left-1/2 -translate-x-1/2 w-[600px] h-[300px] opacity-30" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/[0.08]">
           {/* Col 1 & 2: Brand & Physical Location */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-4 relative">
+            {/* Tiny spinning globe, echoing "global solutions delivered locally" */}
+            <div className="absolute -top-6 right-0 w-24 h-24 opacity-70 pointer-events-none hidden md:block">
+              <CobeGlobe size={200} />
+            </div>
             <CiiiaLogo size="lg" />
             
             <p className="text-xs font-mono text-[#5CA9DB] font-semibold tracking-widest uppercase">
@@ -116,22 +130,34 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenContact }) => 
               CERTIFICACIONES
             </h4>
             <div className="space-y-3 text-xs font-mono text-[#A8ACB3]">
-              <div className="p-2.5 rounded bg-[#141518] border border-[#26282D]">
+              <div className="p-2.5 rounded glass-chip">
                 <div className="text-white font-semibold">ISO/IEC 42001</div>
                 <div className="text-[10px] text-[#6E737C]">AI Management System</div>
               </div>
-              <div className="p-2.5 rounded bg-[#141518] border border-[#26282D]">
+              <div className="p-2.5 rounded glass-chip">
                 <div className="text-white font-semibold">NVIDIA DLI Institute</div>
                 <div className="text-[10px] text-[#6E737C]">Centro Oficial Certificado</div>
               </div>
               <button
                 onClick={onOpenContact}
-                className="w-full py-2 bg-[#1D1F23] hover:bg-[#5CA9DB] hover:text-[#0A0A0B] text-[#8CC6EC] rounded text-[11px] font-semibold transition-colors"
+                className="w-full py-2 glass-chip hover:bg-[#5CA9DB] hover:border-[#5CA9DB] hover:text-[#0A0A0B] text-[#8CC6EC] rounded text-[11px] font-semibold transition-all glow-accent-sm"
               >
                 CONTACTO DIRECTO →
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Flowing quick-navigation marquee */}
+        <div className="hidden sm:block h-56 border-b border-white/[0.08] mb-8">
+          <FlowingMenu
+            items={[
+              { text: 'AI EXECUTION', image: MONOCHROME_TILE, onClick: () => onNavigate('ai-execution') },
+              { text: 'AI LAB / PIIT', image: MONOCHROME_TILE, onClick: () => onNavigate('ai-lab') },
+              { text: 'CII.IA ACADEMY', image: MONOCHROME_TILE, onClick: () => onNavigate('academy') },
+              { text: 'ECOSISTEMA', image: MONOCHROME_TILE, onClick: () => onNavigate('ecosistema') },
+            ]}
+          />
         </div>
 
         {/* Bottom copyright and legal line */}

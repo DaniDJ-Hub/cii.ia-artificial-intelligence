@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BRAND_PAIRS } from '../data/ciiiaData';
 import { ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { HoverBorderGradient } from '../../components/ui/HoverBorderGradient';
+import { usePrefersReducedMotion } from '../../hooks/use-reduced-motion';
+
+const LaserFlow = lazy(() => import('../../components/effects/LaserFlow'));
 
 interface CtaSectionProps {
   onOpenContact: () => void;
@@ -8,6 +12,7 @@ interface CtaSectionProps {
 
 export const CtaSection: React.FC<CtaSectionProps> = ({ onOpenContact }) => {
   const [activePairIndex, setActivePairIndex] = useState(0);
+  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -21,10 +26,20 @@ export const CtaSection: React.FC<CtaSectionProps> = ({ onOpenContact }) => {
   return (
     <section 
       id="cta"
-      className="py-24 sm:py-32 bg-[#0A0A0B] border-b border-[#26282D] relative overflow-hidden text-center"
+      className="py-24 sm:py-32 bg-[#0A0A0B] relative overflow-hidden text-center"
     >
+      <div className="absolute top-0 left-0 right-0 divider-glow" />
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#5CA9DB]/5 rounded-full blur-3xl pointer-events-none -z-0" />
+
+      {/* Dramatic ambient laser beam, the visual "next step" the copy talks about */}
+      {!reducedMotion && (
+        <div className="pointer-events-none absolute inset-0 opacity-70">
+          <Suspense fallback={null}>
+            <LaserFlow color="#5CA9DB" backgroundColor="#0A0A0B" wispDensity={0.8} fogIntensity={0.25} />
+          </Suspense>
+        </div>
+      )}
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -48,18 +63,20 @@ export const CtaSection: React.FC<CtaSectionProps> = ({ onOpenContact }) => {
 
         {/* CTA Button */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <button
+          <HoverBorderGradient
+            as="button"
             id="cta-final-button"
             onClick={onOpenContact}
-            className="h-13 sm:h-14 px-8 rounded bg-[#5CA9DB] hover:bg-[#8CC6EC] text-[#0A0A0B] text-sm font-mono font-bold tracking-wider uppercase transition-all duration-150 flex items-center justify-center gap-3 shadow-[0_0_35px_-5px_rgba(92,169,219,0.6)] active:scale-95 w-full sm:w-auto"
+            containerClassName="rounded"
+            className="!px-8 !py-0 h-13 sm:h-14 text-sm font-mono font-bold tracking-wider uppercase flex items-center gap-3"
           >
             <span>AGENDA UNA SESIÓN EJECUTIVA</span>
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </HoverBorderGradient>
         </div>
 
         {/* Trust Badges */}
-        <div className="mt-12 pt-8 border-t border-[#26282D] grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono text-[#A8ACB3]">
+        <div className="mt-12 pt-8 border-t border-white/[0.08] grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono text-[#A8ACB3]">
           <div className="flex items-center justify-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-[#5CA9DB]" />
             <span>Respuesta en menos de 24 horas</span>

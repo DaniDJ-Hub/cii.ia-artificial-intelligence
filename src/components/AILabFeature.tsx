@@ -43,12 +43,13 @@ export const AILabFeature: React.FC<AILabFeatureProps> = ({
   return (
     <section 
       id="ailab"
-      className="py-24 sm:py-32 bg-[#141518] border-b border-[#26282D] relative overflow-hidden"
+      className="py-24 sm:py-32 bg-[#141518] relative overflow-hidden"
     >
+      <div className="absolute top-0 left-0 right-0 divider-glow" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="max-w-3xl text-left mb-16">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#0A0A0B] border border-[#26282D] mb-4">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded glass-chip mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-[#5CA9DB]"></span>
             <span className="text-[11px] font-mono tracking-[0.24em] text-[#5CA9DB] uppercase font-semibold">
               07 · INFRAESTRUCTURA FÍSICA PROPIA · PIIT
@@ -69,7 +70,7 @@ export const AILabFeature: React.FC<AILabFeatureProps> = ({
           {labAssets.map((asset, idx) => (
             <div 
               key={idx}
-              className="p-6 rounded-lg bg-[#0A0A0B] border border-[#26282D] hover:border-[#5CA9DB] transition-all flex flex-col justify-between text-left"
+              className="p-6 rounded-lg glass-card transition-all flex flex-col justify-between text-left"
             >
               <div>
                 <div className="text-xs font-mono text-[#5CA9DB] font-bold mb-3">
@@ -83,7 +84,7 @@ export const AILabFeature: React.FC<AILabFeatureProps> = ({
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-[#26282D] text-[10px] font-mono text-[#8CC6EC]">
+              <div className="pt-3 border-t border-white/[0.08] text-[10px] font-mono text-[#8CC6EC]">
                 {asset.spec}
               </div>
             </div>
@@ -91,7 +92,7 @@ export const AILabFeature: React.FC<AILabFeatureProps> = ({
         </div>
 
         {/* The Sandbox -> MVP -> PoC -> Industrialization Cycle */}
-        <div className="p-8 sm:p-10 rounded-xl bg-[#0A0A0B] border border-[#26282D] text-left mb-12">
+        <div className="p-8 sm:p-10 rounded-xl glass-chip text-left mb-12">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
             <div>
               <span className="text-xs font-mono text-[#5CA9DB] uppercase tracking-wider font-semibold">
@@ -112,7 +113,7 @@ export const AILabFeature: React.FC<AILabFeatureProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {labCycle.map((item, idx) => (
-              <div key={idx} className="relative p-5 rounded-lg bg-[#141518] border border-[#26282D]">
+              <div key={idx} className="relative p-5 rounded-lg glass-panel">
                 <div className="flex items-center justify-between mb-3">
                   <span className="font-data-numeric text-xl font-bold text-[#5CA9DB]">{item.step}</span>
                   <div className="w-2 h-2 rounded-full bg-[#5CA9DB]/60"></div>

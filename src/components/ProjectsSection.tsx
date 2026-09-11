@@ -2,6 +2,18 @@ import React, { useState } from 'react';
 import { PROJECT_CASES } from '../data/ciiiaData';
 import { ProjectCase } from '../types';
 import { Filter, Eye, ArrowRight, CheckCircle2, Cpu } from 'lucide-react';
+import TiltedCard from '../../components/ui/TiltedCard';
+import GradualBlur from '../../components/ui/GradualBlur';
+
+const SECTOR_IMAGES: Record<string, string> = {
+  Manufactura: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=900&auto=format&fit=crop',
+  'Comercio y Retail': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=900&auto=format&fit=crop',
+  Multisectorial: 'https://images.unsplash.com/photo-1526378800651-c32d170fe6f8?q=80&w=900&auto=format&fit=crop',
+  'Servicios Financieros': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=900&auto=format&fit=crop',
+  'Seguridad Pública': 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=900&auto=format&fit=crop',
+  'Seguridad Industrial': 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=900&auto=format&fit=crop',
+};
+const DEFAULT_CASE_IMAGE = 'https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?q=80&w=900&auto=format&fit=crop';
 
 interface ProjectsSectionProps {
   onSelectCase: (caseItem: ProjectCase) => void;
@@ -28,13 +40,14 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   return (
     <section 
       id="casos"
-      className="py-20 sm:py-28 bg-[#0A0A0B] border-b border-[#26282D] relative"
+      className="py-20 sm:py-28 bg-[#0A0A0B] relative"
     >
+      <div className="absolute top-0 left-0 right-0 divider-glow" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="max-w-3xl text-left mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#141518] border border-[#26282D] mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-[#5CA9DB]" />
             <span className="text-[11px] font-mono tracking-widest text-[#5CA9DB] uppercase font-semibold">
               CASOS DE ESTUDIO REALES
@@ -51,8 +64,38 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
           </p>
         </div>
 
+        {/* Featured cases: interactive tilt spotlight strip */}
+        <div className="relative mb-12">
+          <div className="flex gap-5 overflow-x-auto pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {PROJECT_CASES.slice(0, 6).map((c) => (
+              <div key={c.id} onClick={() => onSelectCase(c)} className="shrink-0 w-56 cursor-pointer">
+                <TiltedCard
+                  imageSrc={SECTOR_IMAGES[c.sector] || DEFAULT_CASE_IMAGE}
+                  altText={c.title}
+                  captionText={`${c.metricHighlight} · ${c.metricLabel}`}
+                  containerHeight="200px"
+                  containerWidth="100%"
+                  imageHeight="200px"
+                  imageWidth="100%"
+                  rotateAmplitude={10}
+                  scaleOnHover={1.05}
+                  displayOverlayContent
+                  overlayContent={
+                    <div className="w-full px-3 pb-2 pt-16 bg-gradient-to-t from-black/85 to-transparent rounded-b-2xl">
+                      <div className="text-[10px] font-mono text-[#8CC6EC] uppercase">{c.sector}</div>
+                      <div className="font-display text-sm font-bold text-white leading-tight">{c.title}</div>
+                    </div>
+                  }
+                />
+              </div>
+            ))}
+          </div>
+          <GradualBlur position="right" width="4rem" height="100%" target="parent" strength={2.5} />
+          <GradualBlur position="left" width="4rem" height="100%" target="parent" strength={2.5} />
+        </div>
+
         {/* Filters Bar: Tech & Active Sector */}
-        <div className="mb-10 p-3 sm:p-4 rounded-xl bg-[#141518] border border-[#26282D] flex flex-wrap items-center justify-between gap-4 text-left">
+        <div className="mb-10 p-3 sm:p-4 rounded-xl glass-panel flex flex-wrap items-center justify-between gap-4 text-left">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-mono text-[#A8ACB3] uppercase mr-2 flex items-center gap-1.5">
               <Filter className="w-3.5 h-3.5 text-[#5CA9DB]" />
@@ -70,7 +113,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                 onClick={() => setTechFilter(t.id)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-colors ${
                   techFilter === t.id
-                    ? 'bg-[#0A0A0B] text-[#5CA9DB] font-bold border border-[#3D8FC4]/50 shadow-sm'
+                    ? 'glass-chip text-[#5CA9DB] font-bold !border-[#3D8FC4]/50 glow-accent-sm'
                     : 'text-[#A8ACB3] hover:text-white bg-transparent'
                 }`}
               >
@@ -80,7 +123,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
           </div>
 
           {activeSector && activeSector !== 'all' && (
-            <div className="flex items-center gap-2 bg-[#0A0A0B] px-3 py-1.5 rounded-lg border border-[#26282D]">
+            <div className="flex items-center gap-2 bg-[#0A0A0B] px-3 py-1.5 rounded-lg border border-white/[0.08]">
               <span className="text-[11px] font-mono text-white">Sector: {activeSector}</span>
               <button
                 onClick={() => {
@@ -101,12 +144,12 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             <div
               key={c.id}
               onClick={() => onSelectCase(c)}
-              className="p-6 rounded-xl bg-[#141518] border border-[#26282D] hover:border-[#5CA9DB] transition-all duration-200 cursor-pointer flex flex-col justify-between text-left group hover:-translate-y-1 shadow-md"
+              className="p-6 rounded-xl glass-card transition-all duration-200 cursor-pointer flex flex-col justify-between text-left group"
             >
               <div>
                 {/* Tech tag and deployment time */}
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] font-mono text-[#8CC6EC] px-2.5 py-0.5 rounded-full bg-[#0A0A0B] border border-[#26282D]">
+                  <span className="text-[10px] font-mono text-[#8CC6EC] px-2.5 py-0.5 rounded-full glass-chip">
                     {c.technology}
                   </span>
                   <span className="text-[10px] font-mono text-[#6E737C]">
@@ -137,7 +180,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 mb-6">
                   {c.tags.map((tg, idx) => (
-                    <span key={idx} className="text-[9px] font-mono text-[#6E737C] px-2 py-0.5 rounded bg-[#0A0A0B]">
+                    <span key={idx} className="text-[9px] font-mono text-[#6E737C] px-2 py-0.5 rounded glass-chip">
                       #{tg}
                     </span>
                   ))}
@@ -145,7 +188,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
               </div>
 
               {/* Card Footer: Sector & Action */}
-              <div className="pt-4 border-t border-[#26282D] flex items-center justify-between text-xs font-mono">
+              <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-mono">
                 <span className="text-[#6E737C] truncate max-w-[170px]">{c.sector}</span>
                 <span className="text-[#5CA9DB] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                   Ver caso <ArrowRight className="w-3.5 h-3.5" />

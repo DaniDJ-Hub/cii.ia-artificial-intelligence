@@ -11,10 +11,12 @@ import { HeroSection } from './components/HeroSection';
 import { ProblemSection } from './components/ProblemSection';
 import { StatementSection } from './components/StatementSection';
 import { ExecutionCycleSection } from './components/ExecutionCycleSection';
+import { IndustriesSection } from './components/IndustriesSection';
 import { ServicesSection } from './components/ServicesSection';
 import { MetricsSection } from './components/MetricsSection';
 import { ProjectsSection } from './components/ProjectsSection';
 import { EcosystemSection } from './components/EcosystemSection';
+import { InsightsSection } from './components/InsightsSection';
 import { CtaSection } from './components/CtaSection';
 import { Footer } from './components/Footer';
 import { CaseModal } from './components/CaseModal';
@@ -140,6 +142,14 @@ export default function App() {
                 }}
               />
 
+              {/* 4.5 INDUSTRIAS: Aplicabilidad por sector */}
+              <IndustriesSection
+                onSelectSector={(sectorName) => {
+                  setSelectedSectorFilter(sectorName);
+                  handleNavigateSection('casos');
+                }}
+              />
+
               {/* 5. SOLUCIONES: Servicios en cards visuales interactivas con hover */}
               <ServicesSection
                 onNavigate={(page) => {
@@ -167,6 +177,9 @@ export default function App() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
               />
+
+              {/* 8.5 INSIGHTS: Investigación y publicaciones técnicas */}
+              <InsightsSection />
 
               {/* 9. CTA FINAL: Construyamos el siguiente paso */}
               <CtaSection onOpenContact={handleOpenGeneralContact} />

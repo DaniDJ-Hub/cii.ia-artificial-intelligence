@@ -1,18 +1,20 @@
 import React from 'react';
 import { CORE_METRICS } from '../data/ciiiaData';
 import { TrendingUp, BarChart3, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Tooltip } from '../../components/ui/Tooltip';
 
 export const MetricsSection: React.FC = () => {
   return (
     <section 
       id="impacto"
-      className="py-20 sm:py-28 bg-[#141518] border-b border-[#26282D] relative"
+      className="py-20 sm:py-28 bg-[#141518] relative"
     >
+      <div className="absolute top-0 left-0 right-0 divider-glow" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="max-w-3xl text-left mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A0A0B] border border-[#26282D] mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-chip mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-[#5CA9DB]" />
             <span className="text-[11px] font-mono tracking-widest text-[#5CA9DB] uppercase font-semibold">
               IMPACTO MEDIBLE EN PRODUCCIÓN
@@ -34,7 +36,7 @@ export const MetricsSection: React.FC = () => {
           {CORE_METRICS.map((metric) => (
             <div 
               key={metric.id}
-              className="p-8 rounded-xl bg-[#0A0A0B] border border-[#26282D] hover:border-[#5CA9DB] transition-all duration-200 flex flex-col justify-between text-left group hover:-translate-y-1 shadow-lg"
+              className="p-8 rounded-xl glass-card transition-all duration-200 flex flex-col justify-between text-left group"
             >
               <div>
                 {/* Aldrich high-impact number */}
@@ -53,9 +55,11 @@ export const MetricsSection: React.FC = () => {
                 </p>
               </div>
 
-              {/* Sector tag */}
-              <div className="mt-8 pt-4 border-t border-[#26282D] flex items-center justify-between text-[10px] font-mono text-[#6E737C]">
-                <span>SECTOR VALIDADO</span>
+              {/* Sector tag with source tooltip */}
+              <div className="mt-8 pt-4 border-t border-white/[0.08] flex items-center justify-between text-[10px] font-mono text-[#6E737C]">
+                <Tooltip content={metric.subtext}>
+                  <span className="cursor-help underline decoration-dotted underline-offset-2">SECTOR VALIDADO</span>
+                </Tooltip>
                 <span className="text-[#8CC6EC] font-semibold">{metric.sector}</span>
               </div>
             </div>

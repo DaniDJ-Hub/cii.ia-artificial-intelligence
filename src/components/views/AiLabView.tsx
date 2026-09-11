@@ -1,5 +1,18 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { ArrowLeft, ArrowRight, HardDrive, Cpu, Compass, Video, Layers, CheckCircle2, MapPin } from 'lucide-react';
+import ScrollExpand from '../../../components/ui/ScrollExpand';
+import HeroCardsReveal from '../../../components/ui/HeroCardsReveal';
+import { usePrefersReducedMotion } from '../../../hooks/use-reduced-motion';
+
+const FluidGlass = lazy(() => import('../../../components/effects/FluidGlass'));
+
+const LAB_HERO_IMAGE = 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1600&auto=format&fit=crop';
+
+const LAB_CARD_IMAGES = [
+  { active: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=500&auto=format&fit=crop', idle: 'https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=500&auto=format&fit=crop&sat=-100', label: 'Robótica' },
+  { active: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=500&auto=format&fit=crop', idle: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=500&auto=format&fit=crop&sat=-100', label: 'LiDAR' },
+  { active: 'https://images.unsplash.com/photo-1591405351990-4726e331f141?q=80&w=500&auto=format&fit=crop', idle: 'https://images.unsplash.com/photo-1591405351990-4726e331f141?q=80&w=500&auto=format&fit=crop&sat=-100', label: 'GPU Edge' },
+];
 
 interface AiLabViewProps {
   onBackToHome: () => void;
@@ -7,6 +20,7 @@ interface AiLabViewProps {
 }
 
 export const AiLabView: React.FC<AiLabViewProps> = ({ onBackToHome, onOpenContact }) => {
+  const reducedMotion = usePrefersReducedMotion();
   const labEquipment = [
     {
       category: 'ROBÓTICA & MANUFACTURA',
@@ -60,7 +74,7 @@ export const AiLabView: React.FC<AiLabViewProps> = ({ onBackToHome, onOpenContac
 
         {/* Header (Pantalla 04) */}
         <div className="max-w-3xl mb-12">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#141518] border border-[#26282D] mb-4">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded glass-panel mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-[#5CA9DB]"></span>
             <span className="text-[11px] font-mono tracking-[0.24em] text-[#5CA9DB] uppercase font-semibold">
               INFRAESTRUCTURA FÍSICA INSTALADA · PARQUE PIIT
@@ -76,8 +90,45 @@ export const AiLabView: React.FC<AiLabViewProps> = ({ onBackToHome, onOpenContac
           </p>
         </div>
 
+        {/* Scroll-driven reveal of the physical lab floor */}
+        <div className="mb-16 h-[70vh] rounded-2xl overflow-hidden glass-panel relative">
+          <ScrollExpand
+            src={LAB_HERO_IMAGE}
+            alt="Piso del AI Lab en el PIIT"
+            title="AQUÍ SE VALIDA ANTES DE INVERTIR"
+            scrollHint="Desplázate para abrir el laboratorio"
+          />
+        </div>
+
+        {/* Equipment preview, hover to reveal each category */}
+        <div className="mb-16">
+          <h3 className="font-mono text-xs font-bold text-[#5CA9DB] tracking-widest uppercase mb-4">
+            VISTAZO RÁPIDO AL EQUIPAMIENTO
+          </h3>
+          <div className="h-[420px] rounded-xl glass-panel overflow-hidden">
+            <HeroCardsReveal
+              mainSrc={LAB_HERO_IMAGE}
+              cards={LAB_CARD_IMAGES.map((c) => ({ activeSrc: c.active, idleSrc: c.idle, label: c.label }))}
+            />
+          </div>
+        </div>
+
+        {/* Ambient floating glass shape: a literal "fluid glass" lens over the lab narrative */}
+        {!reducedMotion && (
+          <div className="mb-16 h-64 rounded-xl glass-panel glow-accent-sm overflow-hidden relative">
+            <Suspense fallback={null}>
+              <FluidGlass geometry="icosahedron" scale={1.2} followPointer autoRotate color="#5CA9DB" />
+            </Suspense>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-8 text-center">
+              <p className="font-display text-sm sm:text-base text-white/70 uppercase tracking-wide max-w-md">
+                Cada prototipo pasa por este lente antes de tocar tu línea de producción
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Location Banner */}
-        <div className="p-4 rounded-lg bg-[#141518] border border-[#26282D] flex items-center justify-between gap-4 mb-12 text-xs font-mono">
+        <div className="p-4 rounded-lg glass-panel flex items-center justify-between gap-4 mb-12 text-xs font-mono">
           <div className="flex items-center gap-2 text-white">
             <MapPin className="w-4 h-4 text-[#5CA9DB]" />
             <span>PIIT Monterrey: Autopista al Aeropuerto Km 9.5, Apodaca NL</span>
@@ -90,7 +141,7 @@ export const AiLabView: React.FC<AiLabViewProps> = ({ onBackToHome, onOpenContac
           {labEquipment.map((eq, idx) => (
             <div 
               key={idx}
-              className="p-6 rounded-xl bg-[#141518] border border-[#26282D] hover:border-[#5CA9DB] transition-all flex flex-col justify-between"
+              className="p-6 rounded-xl glass-card transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="text-[10px] font-mono text-[#5CA9DB] font-bold uppercase mb-2">
@@ -99,7 +150,7 @@ export const AiLabView: React.FC<AiLabViewProps> = ({ onBackToHome, onOpenContac
                 <h3 className="font-display text-lg font-bold text-white uppercase tracking-tight mb-2">
                   {eq.name}
                 </h3>
-                <div className="p-2.5 rounded bg-[#0A0A0B] border border-[#26282D] text-[11px] font-mono text-[#8CC6EC] mb-3">
+                <div className="p-2.5 rounded glass-chip text-[11px] font-mono text-[#8CC6EC] mb-3">
                   {eq.specs}
                 </div>
                 <p className="text-xs text-[#A8ACB3] font-sans leading-relaxed">
@@ -107,7 +158,7 @@ export const AiLabView: React.FC<AiLabViewProps> = ({ onBackToHome, onOpenContac
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[#26282D] flex items-center gap-1.5 text-[10px] font-mono text-emerald-400">
+              <div className="mt-6 pt-4 border-t border-white/[0.08] flex items-center gap-1.5 text-[10px] font-mono text-emerald-400">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>Disponible para pruebas industriales</span>
               </div>
@@ -116,7 +167,7 @@ export const AiLabView: React.FC<AiLabViewProps> = ({ onBackToHome, onOpenContac
         </div>
 
         {/* How We Work: 6-Step Protocol */}
-        <div className="p-8 sm:p-10 rounded-xl bg-[#141518] border border-[#26282D] mb-12">
+        <div className="p-8 sm:p-10 rounded-xl glass-panel mb-12">
           <h3 className="font-mono text-xs font-bold text-[#5CA9DB] tracking-widest uppercase mb-2">
             PROTOCOLO TÉCNICO DE LABORATORIO
           </h3>
@@ -133,7 +184,7 @@ export const AiLabView: React.FC<AiLabViewProps> = ({ onBackToHome, onOpenContac
               { num: '05', title: 'Stress Testing', desc: 'Pruebas a velocidad máxima simulada de línea de producción (24/7).' },
               { num: '06', title: 'Traslado a Planta', desc: 'Empaquetado de hardware validado para instalación directa en sitio.' },
             ].map((step, i) => (
-              <div key={i} className="p-4 rounded-lg bg-[#0A0A0B] border border-[#26282D]">
+              <div key={i} className="p-4 rounded-lg glass-chip">
                 <div className="font-data-numeric text-lg font-bold text-[#5CA9DB] mb-1">{step.num}</div>
                 <div className="font-mono text-xs font-bold text-white uppercase mb-1">{step.title}</div>
                 <div className="text-xs text-[#A8ACB3] font-sans">{step.desc}</div>
@@ -143,7 +194,7 @@ export const AiLabView: React.FC<AiLabViewProps> = ({ onBackToHome, onOpenContac
         </div>
 
         {/* Action button */}
-        <div className="p-8 rounded-xl bg-[#0F2E42]/30 border border-[#29729F]/40 flex flex-wrap items-center justify-between gap-6">
+        <div className="p-8 rounded-xl bg-[#0F2E42]/30 backdrop-blur-md border border-[#29729F]/40 glow-accent-sm flex flex-wrap items-center justify-between gap-6">
           <div>
             <h3 className="font-display text-xl font-bold text-white uppercase">
               Agenda una visita presencial a nuestras instalaciones

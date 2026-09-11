@@ -9,7 +9,7 @@ export const MobileFloatingBar: React.FC<MobileFloatingBarProps> = ({ onOpenCont
   return (
     <div 
       id="mobile-bottom-bar"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0A0A0B]/95 backdrop-blur-lg border-t border-[#26282D] p-3 shadow-2xl safe-area-bottom"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 glass-panel-strong p-3 safe-area-bottom"
     >
       <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
         <div className="text-left pl-1">
@@ -23,7 +23,7 @@ export const MobileFloatingBar: React.FC<MobileFloatingBarProps> = ({ onOpenCont
 
         <button
           onClick={onOpenContact}
-          className="h-12 px-5 rounded bg-[#5CA9DB] active:bg-[#8CC6EC] text-[#0A0A0B] text-xs font-mono font-bold tracking-wider uppercase flex items-center gap-2 shadow-[0_0_20px_-5px_rgba(92,169,219,0.5)]"
+          className="h-12 px-5 rounded bg-[#5CA9DB] active:bg-[#8CC6EC] text-[#0A0A0B] text-xs font-mono font-bold tracking-wider uppercase flex items-center gap-2 glow-accent-lg"
         >
           <span>AGENDAR SESIÓN</span>
           <ArrowRight className="w-3.5 h-3.5" />

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Cpu, ShieldAlert } from 'lucide-react';
 import { CLIENT_QUOTES } from '../data/ciiiaData';
+
+const Strands = lazy(() => import('../../components/effects/Strands'));
 
 /**
  * Las citas se leen de CLIENT_QUOTES. Solo existen dos con respaldo documental.
@@ -18,15 +20,22 @@ export const ProblemSection: React.FC = () => {
   }));
 
   return (
-    <section 
+    <section
       id="reto"
-      className="py-20 sm:py-28 bg-[#141518] border-b border-[#26282D] relative"
+      className="py-20 sm:py-28 bg-[#141518] relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="absolute top-0 left-0 right-0 divider-glow" />
+      {/* Ambient generative strands: the tangled threads of a problem being resolved */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.35]">
+        <Suspense fallback={null}>
+          <Strands colors={['#5CA9DB', '#29729F', '#8FC7EA']} count={4} speed={0.3} amplitude={0.6} opacity={0.7} />
+        </Suspense>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Header */}
         <div className="max-w-3xl text-left mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0A0A0B] border border-[#26282D] mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-chip mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-[#5CA9DB]" />
             <span className="text-[11px] font-mono tracking-widest text-[#5CA9DB] uppercase font-semibold">
               EL RETO INDUSTRIAL
@@ -50,14 +59,14 @@ export const ProblemSection: React.FC = () => {
             return (
               <div
                 key={idx}
-                className="p-7 rounded-xl bg-[#0A0A0B] border border-[#26282D] hover:border-[#5CA9DB] transition-all duration-200 flex flex-col justify-between text-left group hover:-translate-y-1"
+                className="p-7 rounded-xl glass-card transition-all duration-200 flex flex-col justify-between text-left group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <div className="w-10 h-10 rounded-lg bg-[#141518] border border-[#26282D] flex items-center justify-center group-hover:border-[#5CA9DB]/40 transition-colors">
+                    <div className="w-10 h-10 rounded-lg glass-panel flex items-center justify-center group-hover:border-[#5CA9DB]/40 transition-colors">
                       <Icon className="w-5 h-5 text-[#5CA9DB]" />
                     </div>
-                    <span className="text-[10px] font-mono text-[#8CC6EC] px-2 py-0.5 rounded bg-[#141518] border border-[#26282D]">
+                    <span className="text-[10px] font-mono text-[#8CC6EC] px-2 py-0.5 rounded glass-panel">
                       {c.tag}
                     </span>
                   </div>
@@ -76,7 +85,7 @@ export const ProblemSection: React.FC = () => {
         </div>
 
         {/* Bottom Takeaway */}
-        <div className="p-6 sm:p-8 rounded-xl bg-[#0A0A0B] border border-[#26282D] flex flex-wrap items-center justify-between gap-6 text-left">
+        <div className="p-6 sm:p-8 rounded-xl glass-chip flex flex-wrap items-center justify-between gap-6 text-left">
           <div className="max-w-2xl">
             <h4 className="font-display text-xl font-bold text-white uppercase">
               EL PROBLEMA NO ES LA IA. <span className="text-[#5CA9DB]">ES LA ÚLTIMA MILLA.</span>

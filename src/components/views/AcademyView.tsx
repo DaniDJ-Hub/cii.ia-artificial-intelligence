@@ -1,5 +1,12 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight, Award, CheckCircle2, BookOpen, Users, Shield, Cpu } from 'lucide-react';
+import ProfileCard from '../../../components/ui/ProfileCard';
+
+const DIRECTOR_AVATAR =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="700"><rect width="600" height="700" fill="#141518"/><circle cx="300" cy="270" r="130" fill="#26282D"/><circle cx="300" cy="620" r="260" fill="#1D1F23"/></svg>',
+  );
 
 interface AcademyViewProps {
   onBackToHome: () => void;
@@ -80,7 +87,7 @@ export const AcademyView: React.FC<AcademyViewProps> = ({ onBackToHome, onOpenCo
 
         {/* Header */}
         <div className="max-w-3xl mb-12">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-[#141518] border border-[#26282D] mb-4">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded glass-panel mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             <span className="text-[11px] font-mono tracking-[0.24em] text-emerald-400 uppercase font-semibold">
               CII.IA ACADEMY · NVIDIA DEEP LEARNING INSTITUTE
@@ -96,10 +103,33 @@ export const AcademyView: React.FC<AcademyViewProps> = ({ onBackToHome, onOpenCo
           </p>
         </div>
 
+        {/* Program lead spotlight */}
+        <div className="mb-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-4 max-w-xs mx-auto lg:mx-0">
+            <ProfileCard
+              avatarUrl={DIRECTOR_AVATAR}
+              name="Dirección Académica"
+              title="CII.IA Academy"
+              handle="ciiia_academy"
+              status="Instructores certificados NVIDIA DLI"
+              contactText="Contactar"
+              onContactClick={onOpenContact}
+            />
+          </div>
+          <div className="lg:col-span-8">
+            <h3 className="font-mono text-xs font-bold text-emerald-400 tracking-widest uppercase mb-3">
+              QUIÉN ENSEÑA
+            </h3>
+            <p className="text-sm sm:text-base text-[#D6D8DC] font-sans leading-relaxed max-w-xl">
+              Los siete tracks son impartidos por instructores certificados por NVIDIA, con experiencia directa en las mismas celdas robóticas y clústeres GPU que después usarás en el AI Lab del PIIT. No es teoría genérica: es la misma infraestructura, el mismo equipo.
+            </p>
+          </div>
+        </div>
+
         {/* NVIDIA Credential Banner */}
-        <div className="p-6 rounded-xl bg-[#0F2E42]/40 border border-[#29729F]/50 flex flex-wrap items-center justify-between gap-6 mb-12">
+        <div className="p-6 rounded-xl bg-[#0F2E42]/40 backdrop-blur-md border border-[#29729F]/50 glow-accent-sm flex flex-wrap items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-[#0A0A0B] border border-[#26282D] rounded-lg text-emerald-400">
+            <div className="p-3 glass-chip rounded-lg text-emerald-400">
               <Award className="w-8 h-8" />
             </div>
             <div>
@@ -124,7 +154,7 @@ export const AcademyView: React.FC<AcademyViewProps> = ({ onBackToHome, onOpenCo
           {academyTracks.map((track, idx) => (
             <div 
               key={idx}
-              className="p-6 rounded-xl bg-[#141518] border border-[#26282D] hover:border-[#5CA9DB] transition-all flex flex-col justify-between"
+              className="p-6 rounded-xl glass-card transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -149,7 +179,7 @@ export const AcademyView: React.FC<AcademyViewProps> = ({ onBackToHome, onOpenCo
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-[#26282D] flex items-center justify-between">
+              <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between">
                 <span className="text-[11px] font-mono text-[#6E737C]">Modalidad híbrida / in-plant</span>
                 <button
                   onClick={onOpenContact}

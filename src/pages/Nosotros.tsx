@@ -1,13 +1,15 @@
 import { lazy, Suspense, useRef } from 'react';
 import { motion } from 'motion/react';
 import { BRAND_PAIRS, CLIENT_QUOTES, CONTACT_INFO, TAGLINE } from '../data/ciiiaData';
+import { cn } from '../lib/cn';
 import { usePageTitle } from '../lib/usePageTitle';
 import { MOTION, gsap, useGSAP } from '../motion/gsap';
 import { useMotionPreferences } from '../motion/useMotionPreferences';
 import { CtaBand } from '../ui/CtaBand';
-import { FoundersList } from '../ui/FoundersList';
+import { FoundersList, animateFounders } from '../ui/FoundersList';
 import { TextLink } from '../ui/links';
 import { PageIntro } from '../ui/PageIntro';
+import { Photo, hasPhoto } from '../ui/Photo';
 
 const CobeGlobe = lazy(() => import('../../components/ui/CobeGlobe'));
 
@@ -25,11 +27,45 @@ export function Nosotros() {
   usePageTitle('Nosotros');
   const rootRef = useRef<HTMLDivElement>(null);
   const { reducedMotion } = useMotionPreferences();
+  const headerPhoto = hasPhoto('nosotros-encabezado');
+  const sedePhoto = hasPhoto('nosotros-global-solutions');
 
   useGSAP(
     () => {
       const q = gsap.utils.selector(rootRef);
       const mm = gsap.matchMedia();
+
+      mm.add(MOTION, () => {
+        // Encabezado: tras el título, la foto del laboratorio se abre de izquierda
+        // a derecha como un panorama y después acompaña el scroll con parallax.
+        const header = q('[data-header-photo]')[0];
+        if (header) {
+          gsap
+            .timeline({ delay: 0.35 })
+            .fromTo(
+              header,
+              { clipPath: 'inset(0% 100% 0% 0%)' },
+              { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'power4.inOut' },
+              0,
+            )
+            .fromTo(q('[data-header-zoom]'), { scale: 1.2 }, { scale: 1, duration: 1.8, ease: 'power3.out' }, 0);
+
+          gsap.fromTo(
+            q('[data-header-parallax]'),
+            { yPercent: 0 },
+            {
+              yPercent: 6,
+              ease: 'none',
+              scrollTrigger: { trigger: header, start: 'top 60%', end: 'bottom top', scrub: true },
+            },
+          );
+        }
+
+        // Instituciones fundadoras: los logotipos se trazan y cada institución
+        // entra en orden con su filete.
+        const founders = q('[data-founders]')[0];
+        if (founders) animateFounders(founders);
+      });
 
       // Principios: cada verbo se desliza hacia su lugar, alternando dirección.
       mm.add(MOTION.desktop, () => {
@@ -42,8 +78,8 @@ export function Nosotros() {
         });
       });
 
-      // Sede: el globo se acerca y se endereza mientras la sección cruza la pantalla.
       mm.add(MOTION, () => {
+        // Sede: el globo se acerca y se endereza mientras la sección cruza la pantalla.
         gsap.fromTo(
           q('[data-globe]'),
           { transformPerspective: 1200, scale: 0.78, rotateX: 22, yPercent: 10 },
@@ -55,6 +91,17 @@ export function Nosotros() {
             scrollTrigger: { trigger: q('[data-sede]')[0], start: 'top bottom', end: 'bottom top', scrub: 0.6 },
           },
         );
+
+        // Global Solutions delivered Locally: después de lo global (el globo), lo
+        // local. La foto se expande desde un encuadre cerrado hasta el ancho
+        // completo mientras la imagen se asienta.
+        const band = q('[data-sede-photo]')[0];
+        if (band) {
+          gsap
+            .timeline({ scrollTrigger: { trigger: band, start: 'top 92%', end: 'center 55%', scrub: 0.6 } })
+            .fromTo(band, { clipPath: 'inset(12% 16% 12% 16%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none' }, 0)
+            .fromTo(q('[data-sede-zoom]'), { scale: 1.3 }, { scale: 1, ease: 'none' }, 0);
+        }
       });
     },
     { scope: rootRef, dependencies: [reducedMotion] },
@@ -65,6 +112,28 @@ export function Nosotros() {
       <PageIntro
         title="Nosotros"
         lead="El CII.IA es el Centro de Innovación Industrial en Inteligencia Artificial. Desde el PIIT, en Nuevo León, acompaña a empresas e instituciones a llevar la inteligencia artificial de la idea a la operación."
+        media={
+          headerPhoto && (
+            // En escritorio va a la derecha del texto; en móvil, debajo y con ancho acotado.
+            <figure className="max-w-[40rem] lg:max-w-none">
+              <div data-header-photo className="relative isolate aspect-[16/9] overflow-hidden rounded-[3px]">
+                {/* Margen vertical extra para que el parallax nunca descubra el borde. */}
+                <div data-header-parallax className="absolute inset-x-0 -inset-y-[8%]">
+                  <div data-header-zoom className="photo-cold h-full w-full bg-navy">
+                    <Photo
+                      name="nosotros-encabezado"
+                      alt="Laboratorio del CII.IA con brazos robóticos industriales y colaborativos sobre estaciones de trabajo, junto a un ventanal."
+                      sizes="(min-width: 1024px) 38vw, (min-width: 640px) 640px, 100vw"
+                      priority
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </div>
+              </div>
+              <figcaption className="mt-3 text-sm text-graphite">Laboratorio del CII.IA en el PIIT, Nuevo León.</figcaption>
+            </figure>
+          )
+        }
       />
 
       <section aria-labelledby="origen" className="border-t border-rule">
@@ -80,7 +149,7 @@ export function Nosotros() {
             </p>
           </div>
           <div className="lg:col-span-6 lg:col-start-7">
-            <FoundersList />
+            <FoundersList showLogos />
           </div>
         </div>
       </section>
@@ -142,7 +211,12 @@ export function Nosotros() {
       </section>
 
       <section data-sede aria-labelledby="sede" className="overflow-hidden border-t border-rule">
-        <div className="container-site grid items-center gap-12 py-20 sm:py-24 lg:grid-cols-12">
+        <div
+          className={cn(
+            'container-site grid items-center gap-12 lg:grid-cols-12',
+            sedePhoto ? 'pb-12 pt-20 sm:pb-16 sm:pt-24' : 'py-20 sm:py-24',
+          )}
+        >
           <div className="lg:col-span-6">
             <h2 id="sede" className={SECTION_TITLE}>
               {TAGLINE}
@@ -175,6 +249,22 @@ export function Nosotros() {
             </div>
           </div>
         </div>
+
+        {sedePhoto && (
+          <figure className="container-site pb-20 sm:pb-24">
+            <div data-sede-photo className="relative isolate aspect-[4/3] overflow-hidden rounded-[3px] sm:aspect-[16/9]">
+              <div data-sede-zoom className="photo-cold absolute inset-0 bg-navy">
+                <Photo
+                  name="nosotros-global-solutions"
+                  alt="Brazo robótico industrial KUKA frente al logotipo iluminado del CII.IA en la pared del laboratorio."
+                  sizes="(min-width: 1408px) 1312px, 100vw"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+            <figcaption className="mt-3 text-sm text-graphite">Brazo robótico en el laboratorio del CII.IA.</figcaption>
+          </figure>
+        )}
       </section>
 
       <CtaBand

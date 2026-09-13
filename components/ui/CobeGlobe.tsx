@@ -39,14 +39,25 @@ export const CobeGlobe = ({
   mapBrightness = 5,
   diffuse = 1.2,
 }: CobeGlobeProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
+
+    // cobe 2 envuelve el canvas en un div propio (insertBefore + append) y añade
+    // nodos al DOM. Si el canvas lo renderiza React, al desmontar solo el globo
+    // React intenta retirarlo de un padre donde ya no está y la app entera se cae
+    // («removeChild: the node to be removed is not a child»). Por eso el canvas se
+    // crea aquí, dentro de un contenedor que React nunca reconcilia.
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'display:block;width:100%;height:100%';
+    container.appendChild(canvas);
+
     let phi = 0;
     let raf = 0;
 
-    const globe = createGlobe(canvasRef.current, {
+    const globe = createGlobe(canvas, {
       devicePixelRatio: 2,
       width: size * 2,
       height: size * 2,
@@ -78,15 +89,17 @@ export const CobeGlobe = ({
     return () => {
       cancelAnimationFrame(raf);
       globe.destroy();
+      // Retira lo que cobe haya dejado (canvas, envoltorio, marcadores).
+      container.replaceChildren();
     };
     // Los colores se leen al crear el globo; pasar constantes para no recrearlo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markers, size, dark, mapSamples]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ width: '100%', maxWidth: size, height: 'auto', aspectRatio: '1 / 1' }}
+    <div
+      ref={containerRef}
+      style={{ width: '100%', maxWidth: size, aspectRatio: '1 / 1' }}
       className={cn(className)}
     />
   );

@@ -95,7 +95,8 @@ export const INSTITUTIONAL_METRICS = [
   { id: 'i1', value: 12, suffix: '', label: 'Soluciones documentadas' },
   { id: 'i2', value: 50, suffix: '+', label: 'Organizaciones aliadas' },
   { id: 'i3', value: 5, suffix: '', label: 'Socios fundadores' },
-  { id: 'i4', value: 2021, suffix: '', label: 'Inauguración en el PIIT, Nuevo León' }
+  // `kind: 'year'`: es una fecha, no una cantidad; la interfaz no la anima contando.
+  { id: 'i4', value: 2021, suffix: '', label: 'Inauguración en el PIIT, Nuevo León', kind: 'year' }
 ];
 
 /* ---------------------------------------------------------------------------
@@ -506,34 +507,41 @@ export const PROJECT_CASES: ProjectCase[] = [
  * en el ecosistema a través de su AI Hub, pero no como fundador. CAINTRA no
  * aparece en ninguna fuente del CII.IA.
  * PENDIENTE_R9: confirmar redacción y permiso de mención con cada institución.
+ * Logotipos: archivos entregados por el equipo en assets/photos/. El pipeline
+ * los pasa a tinta monocroma; confirmar que cada institución lo autoriza.
  * ------------------------------------------------------------------------- */
 export const FOUNDING_PARTNERS: EcosystemPartner[] = [
   {
     name: 'PROSOFT · Gobierno de México',
+    logo: 'nosotros-instituciones-fundadoras',
     category: 'Shareholders',
     roleInEcosystem: 'Socio fundador · Programa federal de Centros de Innovación Industrial',
     isFoundingPartner: true
   },
   {
     name: 'Gobierno del Estado de Nuevo León',
+    logo: 'nosotros-instituciones-fundadoras-nl',
     category: 'Shareholders',
     roleInEcosystem: 'Socio fundador · Sede en el Parque de Investigación e Innovación Tecnológica',
     isFoundingPartner: true
   },
   {
     name: 'Monterrey IT Clúster (Csoftmty)',
+    logo: 'nosotros-instituciones-fundadoras-mit',
     category: 'Shareholders',
     roleInEcosystem: 'Socio fundador · Administración del centro y vinculación con la industria de TI',
     isFoundingPartner: true
   },
   {
     name: 'Universidad Autónoma de Nuevo León',
+    logo: 'nosotros-instituciones-fundadoras-uanl',
     category: 'Shareholders',
     roleInEcosystem: 'Socio fundador · Formación de talento y transferencia tecnológica',
     isFoundingPartner: true
   },
   {
     name: 'CIMAT',
+    logo: 'nosotros-instituciones-fundadoras-cimat',
     category: 'Shareholders',
     roleInEcosystem: 'Socio fundador · Centro de Investigación en Matemáticas',
     isFoundingPartner: true

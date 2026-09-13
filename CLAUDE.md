@@ -19,8 +19,15 @@ Sitio del CII.IA (Centro de Innovación Industrial en Inteligencia Artificial). 
 
 - El sitio usa **fotografía real del CII.IA**. La guía de encargo, tratamiento, encuadre y especificaciones está en `docs/art-direction.md`.
 - Prohibido el banco de imágenes y los renders genéricos. Si no hay foto real de algo, esa sección va sin imagen.
-- Las fotos se entregan **sin editar** (2400 px de ancho mínimo) en `public/images/`; el tratamiento en blanco y negro frío lo aplica el sitio por CSS, para poder cambiarlo sin volver a pedir material.
-- Cada foto necesita texto alternativo descriptivo y, si aparecen personas identificables, su consentimiento por escrito.
+- Los originales van **sin editar** en `assets/photos/` (nunca en `public/`). `npm run images` los recorta si hace falta, genera variantes WebP en `public/images/` y actualiza `src/data/photos.generated.ts`. Usa el Edge o Chrome instalado: no requiere dependencias nativas.
+- El pipeline normaliza los nombres de archivo (`nosotros-Global Solutions.jpg` → `nosotros-global-solutions`): en el código siempre se usa el nombre normalizado. Dos archivos que produzcan el mismo nombre detienen el proceso.
+- Logotipos: los archivos cuyo nombre contiene `instituciones-fundadoras` se convierten a tinta de la marca sobre fondo transparente, se invierten si vienen sobre fondo oscuro y se recortan a su contenido (`LOGO_PATTERN` en el script). Se referencian desde `FOUNDING_PARTNERS[].logo` y se muestran con `<FoundersList showLogos />`, con `alt=""` porque el nombre ya está escrito al lado.
+- Recortes en `CROPS` de `scripts/build-images.mjs`, como fracciones del original. Se recorta **el archivo**, no por CSS, cuando lo que se quita no debe publicarse (p. ej. `inicio-inspeccion` excluye un monitor con cifras no documentadas).
+- En las páginas se usa `<Photo name=… alt=… sizes=…>` dentro de un contenedor `.photo-cold`, que aplica el blanco y negro frío. Si la foto no se ha procesado, `Photo` no renderiza nada y `hasPhoto()` permite adaptar el layout.
+- Animaciones de foto en inicio: barrido de inspección en «Sistema de inspección» (cubierta que baja con línea de luz, dentro del pin de escritorio) y apertura desde el centro con parallax en «Gobierno, academia e industria». Solo transform; con movimiento reducido no se montan las cubiertas.
+- Foto de encabezado de página: se pasa por `PageIntro media={…}`, no como `children`. En escritorio va en 5 columnas junto al título y el texto, alineada por abajo; debajo en móvil. Como `children` ocupaba todo el ancho bajo el texto y dejaba media pantalla vacía.
+- Animaciones de foto en Nosotros: el encabezado se abre de izquierda a derecha al cargar y luego hace parallax; los logotipos de fundadores se trazan en cadena (`animateFounders`); la foto de «Global Solutions delivered Locally» se expande desde un encuadre cerrado hasta el ancho completo con el scroll.
+- Cada foto necesita texto alternativo descriptivo y, si aparecen personas identificables, su consentimiento por escrito. Una imagen que no es del CII.IA lleva pie «ilustrativa».
 
 ## Reglas de contenido
 
@@ -44,8 +51,12 @@ Sitio del CII.IA (Centro de Innovación Industrial en Inteligencia Artificial). 
 - Toda animación de scroll se registra con `useGSAP` (con `scope`) dentro de `gsap.matchMedia(MOTION)`. Con `prefers-reduced-motion: reduce` no se crea ninguna, Lenis no se monta y el campo 3D no existe; `MotionConfig reducedMotion="user"` cubre Motion.
 - No animar con GSAP un elemento que ya anima Motion: envolverlo y animar el contenedor. Para 3D usar `transformPerspective`; animar solo transform y opacity.
 - Reveals de texto con `SplitReveal` (SplitText por líneas, con máscara). No partir párrafos largos: solo títulos.
+- Datos institucionales (cifras y socios fundadores en inicio): se reproducen **una vez**, sin scrub, para que un dato nunca quede a medio mostrar. Las cantidades cuentan con `textContent` + `snap` (GSAP las restaura al revertir); las fechas (`kind: 'year'` en los datos) no se cuentan, suben desde su máscara. El valor final va siempre en un `sr-only`.
+- Filetes animables: pseudo-elementos con `scale-x-[var(--rule,1)]`. GSAP anima `--rule`; sin animación valen 1 y se ven completos (así `FoundersList` sirve igual en Nosotros y Ecosistema).
 - El scroll 3D vive solo en: acto oscuro de inicio (campo WebGL + hero + manifiesto), índice de soluciones, evidencia (único pin, solo escritorio), bandas CTA, títulos de página, principios y sede en Nosotros, y marca del pie. No extenderlo a otras secciones sin una razón narrativa.
 - `src/three/HeroField.tsx` es el campo de puntos del acto oscuro: dos posiciones por punto interpoladas en el vertex shader, cámara movida por el progreso del scroll y `frameloop` apagado fuera del acto. Si crece, mantener el morfeo en la GPU.
+- `animateFounders(list)` (en `FoundersList.tsx`) es la animación compartida de la lista de socios. Se llama desde la página, no desde el componente: en inicio debe crearse después del pin de evidencia para que su posición cuente con el espacio del pin.
+- **Nunca dejar que una librería mueva un nodo que renderiza React.** `cobe` envuelve su canvas en un div propio; por eso `CobeGlobe` crea el canvas dentro de un contenedor que React no reconcilia. Con el canvas en JSX, activar «reducir movimiento» con Nosotros abierto dejaba la app en blanco (`removeChild`).
 - Kit en `components/`. Integrados hoy: `LaserFlow` (banda CTA de inicio), `CobeGlobe` (Nosotros), `DepthText` (pie) y `3d-card` (evidencia). `CursorGrid` y `Strands` quedaron fuera del hero al llegar el campo 3D. Los que dependen de fotos o logotipos (`ScrollExpand`, `HeroParallax`, `TiltedCard`, galerías) esperan material real: no usarlos con imágenes de stock.
 - Efectos WebGL pesados con `lazy` y solo si `useMotionPreferences().richEffects` (escritorio sin movimiento reducido).
 

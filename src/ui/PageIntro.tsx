@@ -11,10 +11,15 @@ interface PageIntroProps {
   lead?: ReactNode;
   breadcrumb?: Crumb[];
   size?: 'xl' | 'lg';
+  /**
+   * Imagen del encabezado. En escritorio va en una columna a la derecha del
+   * título y el texto, alineada por abajo, para no dejar media página vacía.
+   */
+  media?: ReactNode;
   children?: ReactNode;
 }
 
-export function PageIntro({ title, lead, breadcrumb, size = 'xl', children }: PageIntroProps) {
+export function PageIntro({ title, lead, breadcrumb, size = 'xl', media, children }: PageIntroProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   // Al salir con el scroll, el título retrocede en profundidad: transición
@@ -71,28 +76,36 @@ export function PageIntro({ title, lead, breadcrumb, size = 'xl', children }: Pa
         </nav>
       )}
 
-      <div data-intro-title>
-        <SplitReveal
-          as="h1"
-          mode="load"
-          delay={0.05}
-          className={cn(
-            'display',
-            size === 'xl' ? 'text-[clamp(2.75rem,8vw,7rem)]' : 'max-w-[22ch] text-[clamp(2rem,5vw,4.5rem)]',
-          )}
-        >
-          {title}
-        </SplitReveal>
-      </div>
+      <div className={cn(media && 'grid gap-12 lg:grid-cols-12 lg:items-end lg:gap-10')}>
+        <div className={cn(media && 'lg:col-span-7')}>
+          <div data-intro-title>
+            <SplitReveal
+              as="h1"
+              mode="load"
+              delay={0.05}
+              className={cn(
+                'display',
+                size === 'xl' ? 'text-[clamp(2.75rem,8vw,7rem)]' : 'max-w-[22ch] text-[clamp(2rem,5vw,4.5rem)]',
+                // Con imagen al lado, el título cede un poco para dejarle aire.
+                media && size === 'xl' && 'lg:text-[clamp(2.75rem,6.6vw,6.25rem)]',
+              )}
+            >
+              {title}
+            </SplitReveal>
+          </div>
 
-      {lead && (
-        <p
-          data-intro-lead
-          className="mt-6 max-w-[58ch] text-lg leading-relaxed text-graphite sm:mt-8 sm:text-xl"
-        >
-          {lead}
-        </p>
-      )}
+          {lead && (
+            <p
+              data-intro-lead
+              className="mt-6 max-w-[58ch] text-lg leading-relaxed text-graphite sm:mt-8 sm:text-xl"
+            >
+              {lead}
+            </p>
+          )}
+        </div>
+
+        {media && <div className="lg:col-span-5">{media}</div>}
+      </div>
 
       {children}
     </div>

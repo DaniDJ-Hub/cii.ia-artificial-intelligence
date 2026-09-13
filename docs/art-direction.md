@@ -43,6 +43,17 @@ En la práctica:
 Para `/ecosistema` no hacen falta fotos sino **logotipos**, y hace falta permiso
 de cada organización (`PENDIENTE_R9` en `ciiiaData.ts`).
 
+## Logotipos
+
+- Se entregan tal como los da cada institución, en cualquier color y fondo, en
+  `assets/photos/`.
+- `npm run images` los unifica en un muro monocromo: tinta de la marca sobre
+  fondo transparente, invertidos si venían sobre fondo oscuro y recortados a su
+  contenido. Es la práctica habitual para mostrar logotipos de orígenes distintos
+  sin que el conjunto se vea desordenado.
+- Conviene pedir la versión vectorial o en alta resolución de cada uno: los
+  resplandores y degradados de fondo pueden dejar restos al convertirlos.
+
 ## Cómo encuadrar
 
 1. **Aire a un lado.** Un tercio de la composición se reserva al titular. Sin
@@ -57,10 +68,11 @@ de cada organización (`PENDIENTE_R9` en `ciiiaData.ts`).
 ## Especificaciones de entrega
 
 - 2400 px de ancho como mínimo, sin recortar y sin editar.
-- JPEG de máxima calidad o el original de cámara.
-- Archivos a `public/images/`, con nombre descriptivo en minúsculas y guiones
-  (`ai-lab-celda-manufactura.jpg`).
-- El sitio genera las variantes WebP y AVIF y los tamaños responsivos.
+- JPEG de máxima calidad, PNG o el original exportado de cámara.
+- Archivos a `assets/photos/`, con nombre descriptivo en minúsculas y guiones
+  (`ai-lab-celda-manufactura.jpg`). Nunca directamente en `public/`.
+- Después ejecutar `npm run images`: genera las variantes WebP y los tamaños
+  responsivos en `public/images/`.
 
 ## Requisitos que no son negociables
 

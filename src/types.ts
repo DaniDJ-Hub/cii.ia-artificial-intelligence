@@ -62,6 +62,8 @@ export interface EcosystemPartner {
   category: 'Tech' | 'Shareholders' | 'Academy & Research' | 'AI Specialized' | 'Platforms';
   roleInEcosystem: string;
   isFoundingPartner?: boolean;
+  /** Nombre del logotipo procesado por `npm run images` (sin extensión). */
+  logo?: string;
 }
 
 export interface InsightArticle {

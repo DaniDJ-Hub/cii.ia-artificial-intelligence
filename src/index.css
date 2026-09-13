@@ -158,6 +158,28 @@ html.lenis body {
     background: radial-gradient(62% 100% at 50% 100%, rgb(92 169 219 / 0.22), transparent 72%);
   }
 
+  /* Tratamiento de fotografía del manual de marca: blanco y negro con viraje
+     frío. Vive aquí, y no en los archivos, para poder cambiarlo sin volver a
+     pedir material. */
+  .photo-cold {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .photo-cold img {
+    filter: grayscale(1) contrast(1.06) brightness(0.96);
+  }
+
+  .photo-cold::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--color-steel);
+    mix-blend-mode: color;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
   .brand-dot {
     color: var(--color-steel);
   }

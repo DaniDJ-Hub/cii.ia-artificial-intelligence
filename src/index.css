@@ -180,6 +180,27 @@ html.lenis body {
     pointer-events: none;
   }
 
+  /* Video controlado por scroll. En horizontal cubre la pantalla. En vertical
+     se muestra completo, porque el titular del video ocupa casi todo su ancho,
+     y sus bordes superior e inferior se funden con el fondo marino. */
+  .scroll-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-aspect-ratio: 1/1) {
+    .scroll-video {
+      inset: auto 0;
+      top: 50%;
+      height: auto;
+      translate: 0 -50%;
+      mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
+    }
+  }
+
   .brand-dot {
     color: var(--color-steel);
   }

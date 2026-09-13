@@ -13,8 +13,11 @@ import { FULL_NAV, PRIMARY_NAV } from './navigation';
 /** Id del hero de la landing. */
 export const HERO_ID = 'inicio-hero';
 
-/** Bloque oscuro de la landing: mientras dura, el encabezado va en marino. */
-const DARK_ACT = '[data-act="navy"]';
+/**
+ * Bloques oscuros contiguos de la landing (video de entrada y acto marino):
+ * mientras duran, el encabezado va en marino.
+ */
+const DARK_ACT = '[data-act]';
 
 export function SiteHeader() {
   const { pathname } = useLocation();
@@ -26,14 +29,18 @@ export function SiteHeader() {
   useGSAP(
     () => {
       setMenuOpen(false);
-      const act = document.querySelector(DARK_ACT);
-      if (!act) {
+      const acts = document.querySelectorAll(DARK_ACT);
+      if (acts.length === 0) {
         setOnDarkAct(false);
         return;
       }
+      // Un solo tramo del primero al último: entre bloques contiguos no debe parpadear.
       const trigger = ScrollTrigger.create({
-        trigger: act,
-        start: 'top top',
+        trigger: acts[0],
+        // Empieza cuando el bloque toca el borde inferior del encabezado. Al cargar
+        // ya está ahí: el píxel extra lo deja activo con el scroll en 0.
+        start: () => `top ${headerOffset() + 1}px`,
+        endTrigger: acts[acts.length - 1],
         end: () => `bottom top+=${headerOffset()}`,
         onToggle: (self) => setOnDarkAct(self.isActive),
       });

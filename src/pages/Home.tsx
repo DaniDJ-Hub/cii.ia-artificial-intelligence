@@ -13,6 +13,7 @@ import { formatFigure } from '../lib/text';
 import { usePageTitle } from '../lib/usePageTitle';
 import { MOTION, gsap, headerOffset, useGSAP, type MotionConditions } from '../motion/gsap';
 import { Magnetic } from '../motion/Magnetic';
+import { ScrollVideo, hasVideo } from '../motion/ScrollVideo';
 import { SplitReveal } from '../motion/SplitReveal';
 import { useMotionPreferences } from '../motion/useMotionPreferences';
 import { CtaBand } from '../ui/CtaBand';
@@ -29,14 +30,18 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const SECTION_TITLE = 'display text-[clamp(2rem,4.6vw,4rem)]';
 
 /**
- * Landing en dos actos.
+ * Landing en dos actos, precedidos por el video de bienvenida.
+ *
+ * Entrada: el video WELCOME avanza con el scroll dentro de una sección fijada
+ * (`ScrollVideo`). La página sigue solo cuando el video llega al final.
  *
  * Acto oscuro (hero + manifiesto): un campo de puntos en WebGL persiste detrás
  * de ambas secciones. Al avanzar el scroll la cámara entra en el campo y los
  * puntos pasan de dispersos a retícula: de la idea a la operación.
  *
  * Acto claro (soluciones, evidencia, respaldo): tipografía, filetes e índices.
- * La única sección fijada del sitio es la evidencia, y solo en escritorio.
+ * Secciones fijadas: el video de entrada (en todas las pantallas) y la
+ * evidencia (solo en escritorio).
  */
 export function Home() {
   usePageTitle();
@@ -45,6 +50,7 @@ export function Home() {
   const featured = PROJECT_CASES.find((item) => item.id === FEATURED_CASE_ID)!;
   const inspectionPhoto = hasPhoto('inicio-inspeccion');
   const labPhoto = hasPhoto('inicio-laboratorio');
+  const welcomeVideo = hasVideo('welcome');
 
   useGSAP(
     () => {
@@ -239,6 +245,14 @@ export function Home() {
 
   return (
     <div ref={rootRef}>
+      {/* -------------------------------- ENTRADA -------------------------------- */}
+      {/* Fuera del acto oscuro para que el campo 3D no se renderice oculto detrás del video. */}
+      {welcomeVideo && (
+        <div data-act="intro">
+          <ScrollVideo name="welcome" />
+        </div>
+      )}
+
       {/* ------------------------------ ACTO OSCURO ------------------------------ */}
       <div data-act="navy" data-tone="navy" className="relative isolate bg-navy text-white">
         {/* Fondo del acto: el contenedor absoluto lo acota a este bloque y el
@@ -271,10 +285,11 @@ export function Home() {
             </div>
 
             <div data-hero-title>
+              {/* Con el video delante, el titular se revela al llegar a él y no al cargar. */}
               <SplitReveal
                 as="h1"
-                mode="load"
-                delay={0.15}
+                mode={welcomeVideo ? 'scroll' : 'load'}
+                delay={welcomeVideo ? 0 : 0.15}
                 className="display mt-6 text-[clamp(2.25rem,7.6vw,7.25rem)] sm:mt-8"
               >
                 {/* Los saltos son deliberados; el espacio antes de cada uno mantiene

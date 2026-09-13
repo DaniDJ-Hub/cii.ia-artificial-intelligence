@@ -6,7 +6,8 @@ Sitio del CII.IA (Centro de Innovación Industrial en Inteligencia Artificial). 
 
 - `npm run dev`: servidor local en http://127.0.0.1:3000 (escucha en IPv4; con `localhost` Windows puede resolver a IPv6 y fallar)
 - `npm run lint`: verificación de tipos (`tsc --noEmit`)
-- `npm run build`: build de producción en `dist/`. Al publicar, el hosting debe redirigir todas las rutas a `index.html`.
+- `npm run build`: build de producción en `dist/`. Al publicar, el hosting debe redirigir todas las rutas a `index.html` y servir `/video/*.mp4` con soporte de `Range` (lo normal en hostings estáticos): sin él no se puede buscar dentro del video.
+- `npm run images` y `npm run video`: procesan las fotos y los videos originales (ver abajo).
 
 ## Arquitectura
 
@@ -28,6 +29,17 @@ Sitio del CII.IA (Centro de Innovación Industrial en Inteligencia Artificial). 
 - Foto de encabezado de página: se pasa por `PageIntro media={…}`, no como `children`. En escritorio va en 5 columnas junto al título y el texto, alineada por abajo; debajo en móvil. Como `children` ocupaba todo el ancho bajo el texto y dejaba media pantalla vacía.
 - Animaciones de foto en Nosotros: el encabezado se abre de izquierda a derecha al cargar y luego hace parallax; los logotipos de fundadores se trazan en cadena (`animateFounders`); la foto de «Global Solutions delivered Locally» se expande desde un encuadre cerrado hasta el ancho completo con el scroll.
 - Cada foto necesita texto alternativo descriptivo y, si aparecen personas identificables, su consentimiento por escrito. Una imagen que no es del CII.IA lleva pie «ilustrativa».
+
+## Video
+
+- La landing abre con `WELCOME.mp4` (animación de marca del CII.IA) controlado por scroll: `ScrollVideo` (`src/motion/ScrollVideo.tsx`). La sección se fija bajo el encabezado, el progreso del scroll se traduce en `currentTime` y el pin se suelta cuando el video llega al final. No hay reproducción por tiempo.
+- Los originales van en `assets/video/`. `npm run video` (ffmpeg-static, dependencia de desarrollo) genera en `public/video/` dos anchos (1280 escritorio, 960 móvil), un póster del primer fotograma y un fijo para movimiento reducido (`STILLS` en `scripts/build-video.mjs`), y escribe `src/data/videos.generated.ts`.
+- **No usar un MP4 sin procesar para scrubbing.** Un export normal trae un fotograma clave cada varios segundos: cada seek decodifica decenas de frames y el video avanza a saltos (WELCOME original: ~90 ms por seek, p95 ~200 ms; procesado: ~5 ms). El pipeline codifica con clave cada 8–10 frames, sin B-frames, sin audio y con `faststart`.
+- Sincronía: un seek nuevo solo cuando terminó el anterior (`video.seeking`); encadenarlos deja la imagen congelada. La imagen sigue al scroll con una interpolación corta (`FOLLOW`) y el tick de GSAP solo corre mientras el pin está activo o la imagen no ha alcanzado su posición.
+- Largo del recorrido en `SCROLL_LENGTH` (altos de pantalla: 4.5 escritorio, 3.5 móvil). El pin lleva `refreshPriority: 1` porque todos los triggers de la página van debajo.
+- Encuadre (`.scroll-video` en `index.css`): en pantallas horizontales el video **cubre** la sección (se recorta arriba y abajo en pantallas anchas; decisión del cliente, se probaron y descartaron el video completo con franjas y el relleno desenfocado). En vertical se muestra completo, con bordes fundidos al marino, porque el titular del video ocupa casi todo el ancho. En iOS un play/pause al primer toque habilita los seeks.
+- Con movimiento reducido no hay pin ni se descarga el video: se muestra el fotograma fijo.
+- El encabezado toma como oscuros todos los `[data-act]` contiguos (video de entrada y acto marino) como un solo tramo.
 
 ## Reglas de contenido
 
@@ -53,7 +65,7 @@ Sitio del CII.IA (Centro de Innovación Industrial en Inteligencia Artificial). 
 - Reveals de texto con `SplitReveal` (SplitText por líneas, con máscara). No partir párrafos largos: solo títulos.
 - Datos institucionales (cifras y socios fundadores en inicio): se reproducen **una vez**, sin scrub, para que un dato nunca quede a medio mostrar. Las cantidades cuentan con `textContent` + `snap` (GSAP las restaura al revertir); las fechas (`kind: 'year'` en los datos) no se cuentan, suben desde su máscara. El valor final va siempre en un `sr-only`.
 - Filetes animables: pseudo-elementos con `scale-x-[var(--rule,1)]`. GSAP anima `--rule`; sin animación valen 1 y se ven completos (así `FoundersList` sirve igual en Nosotros y Ecosistema).
-- El scroll 3D vive solo en: acto oscuro de inicio (campo WebGL + hero + manifiesto), índice de soluciones, evidencia (único pin, solo escritorio), bandas CTA, títulos de página, principios y sede en Nosotros, y marca del pie. No extenderlo a otras secciones sin una razón narrativa.
+- El scroll ligado a contenido vive solo en: video de entrada de inicio (pin en todas las pantallas), acto oscuro de inicio (campo WebGL + hero + manifiesto), índice de soluciones, evidencia (pin solo en escritorio), bandas CTA, títulos de página, principios y sede en Nosotros, y marca del pie. No extenderlo a otras secciones sin una razón narrativa.
 - `src/three/HeroField.tsx` es el campo de puntos del acto oscuro: dos posiciones por punto interpoladas en el vertex shader, cámara movida por el progreso del scroll y `frameloop` apagado fuera del acto. Si crece, mantener el morfeo en la GPU.
 - `animateFounders(list)` (en `FoundersList.tsx`) es la animación compartida de la lista de socios. Se llama desde la página, no desde el componente: en inicio debe crearse después del pin de evidencia para que su posición cuente con el espacio del pin.
 - **Nunca dejar que una librería mueva un nodo que renderiza React.** `cobe` envuelve su canvas en un div propio; por eso `CobeGlobe` crea el canvas dentro de un contenedor que React no reconcilia. Con el canvas en JSX, activar «reducir movimiento» con Nosotros abierto dejaba la app en blanco (`removeChild`).

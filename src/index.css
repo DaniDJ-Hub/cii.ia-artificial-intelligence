@@ -84,6 +84,28 @@
   }
 }
 
+/* Lenis: mientras el scroll suave está activo el navegador no debe intervenir. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
 @layer components {
   .container-site {
     width: 100%;
@@ -113,6 +135,27 @@
     font-family: var(--font-figure);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
+  }
+
+  /* Retícula del acto oscuro. Es también el respaldo cuando no hay WebGL:
+     da textura sin costo. */
+  .hero-lattice {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.055) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.055) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(120% 82% at 50% 18%, #000 28%, transparent 78%);
+    mask-image: radial-gradient(120% 82% at 50% 18%, #000 28%, transparent 78%);
+  }
+
+  @media (min-width: 40rem) {
+    .hero-lattice {
+      background-size: 72px 72px;
+    }
+  }
+
+  .hero-horizon {
+    background: radial-gradient(62% 100% at 50% 100%, rgb(92 169 219 / 0.22), transparent 72%);
   }
 
   .brand-dot {

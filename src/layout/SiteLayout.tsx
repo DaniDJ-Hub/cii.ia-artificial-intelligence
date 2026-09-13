@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { MotionConfig, motion } from 'motion/react';
-import { ScrollTrigger } from '../motion/gsap';
+import { useLenis } from 'lenis/react';
+import { ScrollTrigger, headerOffset } from '../motion/gsap';
 import { SiteHeader } from './SiteHeader';
 import { SiteFooter } from './SiteFooter';
 
@@ -9,6 +10,7 @@ export function SiteLayout() {
   const { pathname, hash } = useLocation();
   const mainRef = useRef<HTMLElement>(null);
   const isFirstRender = useRef(true);
+  const lenis = useLenis();
 
   // Las tipografías cambian las alturas: recalcular los ScrollTrigger al cargar.
   useEffect(() => {
@@ -18,17 +20,22 @@ export function SiteLayout() {
   // Al cambiar de página: arriba del todo (o al ancla) y foco en el contenido
   // para que los lectores de pantalla anuncien la nueva página.
   useEffect(() => {
-    if (hash) {
-      document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView();
+    const anchor = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
+
+    if (anchor) {
+      if (lenis) lenis.scrollTo(anchor, { offset: -headerOffset(), immediate: isFirstRender.current });
+      else anchor.scrollIntoView();
     } else if (!isFirstRender.current) {
-      window.scrollTo(0, 0);
+      if (lenis) lenis.scrollTo(0, { immediate: true });
+      else window.scrollTo(0, 0);
     }
+
     if (!isFirstRender.current) mainRef.current?.focus({ preventScroll: true });
     isFirstRender.current = false;
     // La página nueva cambia la altura total: el pie y sus triggers se recalculan.
     const frame = requestAnimationFrame(() => ScrollTrigger.refresh());
     return () => cancelAnimationFrame(frame);
-  }, [pathname, hash]);
+  }, [pathname, hash, lenis]);
 
   return (
     <MotionConfig reducedMotion="user">

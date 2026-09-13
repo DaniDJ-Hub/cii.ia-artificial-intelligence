@@ -1,34 +1,47 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router';
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useLenis } from 'lenis/react';
 import { Menu, X } from 'lucide-react';
 import { Wordmark } from '../ui/Wordmark';
 import { ButtonLink } from '../ui/links';
 import { cn } from '../lib/cn';
+import { ScrollProgress } from '../motion/ScrollProgress';
+import { ScrollTrigger, headerOffset, useGSAP } from '../motion/gsap';
 import { FULL_NAV, PRIMARY_NAV } from './navigation';
 
-/** Id del hero de la landing. Mientras está visible, el encabezado se funde con él. */
+/** Id del hero de la landing. */
 export const HERO_ID = 'inicio-hero';
+
+/** Bloque oscuro de la landing: mientras dura, el encabezado va en marino. */
+const DARK_ACT = '[data-act="navy"]';
 
 export function SiteHeader() {
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  // En la carga inicial el hero aún no está en el DOM: se decide por la ruta
-  // para que el encabezado no pinte un tono y luego transicione al otro.
-  const [pastHero, setPastHero] = useState(() => window.location.pathname !== '/');
-  const { scrollY } = useScroll();
+  const [onDarkAct, setOnDarkAct] = useState(() => window.location.pathname === '/');
+  const lenis = useLenis();
 
-  const updateTone = (y: number) => {
-    const hero = document.getElementById(HERO_ID);
-    setPastHero(!hero || y >= hero.offsetHeight);
-  };
-
-  useMotionValueEvent(scrollY, 'change', updateTone);
-
-  useLayoutEffect(() => {
-    updateTone(window.scrollY);
-    setMenuOpen(false);
-  }, [pathname]);
+  // El tono lo decide el acto oscuro, no una medida manual del scroll.
+  useGSAP(
+    () => {
+      setMenuOpen(false);
+      const act = document.querySelector(DARK_ACT);
+      if (!act) {
+        setOnDarkAct(false);
+        return;
+      }
+      const trigger = ScrollTrigger.create({
+        trigger: act,
+        start: 'top top',
+        end: () => `bottom top+=${headerOffset()}`,
+        onToggle: (self) => setOnDarkAct(self.isActive),
+      });
+      setOnDarkAct(trigger.isActive);
+      return () => trigger.kill();
+    },
+    { dependencies: [pathname] },
+  );
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -42,15 +55,17 @@ export function SiteHeader() {
     const previousOverflow = document.body.style.overflow;
     document.addEventListener('keydown', onKeyDown);
     document.body.style.overflow = 'hidden';
+    lenis?.stop();
     behind.forEach((element) => (element.inert = true));
     return () => {
       document.removeEventListener('keydown', onKeyDown);
       document.body.style.overflow = previousOverflow;
+      lenis?.start();
       behind.forEach((element) => (element.inert = false));
     };
-  }, [menuOpen]);
+  }, [menuOpen, lenis]);
 
-  const onNavy = menuOpen || !pastHero;
+  const onNavy = menuOpen || onDarkAct;
 
   return (
     <header
@@ -116,6 +131,8 @@ export function SiteHeader() {
           </button>
         </div>
       </div>
+
+      <ScrollProgress />
 
       <AnimatePresence>
         {menuOpen && (

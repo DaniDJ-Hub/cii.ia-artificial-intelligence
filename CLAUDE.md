@@ -4,7 +4,7 @@ Sitio del CII.IA (Centro de Innovación Industrial en Inteligencia Artificial). 
 
 ## Comandos
 
-- `npm run dev`: servidor local en http://localhost:3000
+- `npm run dev`: servidor local en http://127.0.0.1:3000 (escucha en IPv4; con `localhost` Windows puede resolver a IPv6 y fallar)
 - `npm run lint`: verificación de tipos (`tsc --noEmit`)
 - `npm run build`: build de producción en `dist/`. Al publicar, el hosting debe redirigir todas las rutas a `index.html`.
 
@@ -14,6 +14,13 @@ Sitio del CII.IA (Centro de Innovación Industrial en Inteligencia Artificial). 
 - `src/pages/` tiene una página por ruta, `src/layout/` el encabezado, el pie y la navegación, y `src/ui/` las piezas reutilizables.
 - La landing solo resume. El detalle vive en su página: no volver a agregar secciones completas a `/`.
 - Investigación y Noticias se omitieron a propósito (sin publicaciones recientes). No crearlas sin contenido real.
+
+## Imágenes
+
+- El sitio usa **fotografía real del CII.IA**. La guía de encargo, tratamiento, encuadre y especificaciones está en `docs/art-direction.md`.
+- Prohibido el banco de imágenes y los renders genéricos. Si no hay foto real de algo, esa sección va sin imagen.
+- Las fotos se entregan **sin editar** (2400 px de ancho mínimo) en `public/images/`; el tratamiento en blanco y negro frío lo aplica el sitio por CSS, para poder cambiarlo sin volver a pedir material.
+- Cada foto necesita texto alternativo descriptivo y, si aparecen personas identificables, su consentimiento por escrito.
 
 ## Reglas de contenido
 
@@ -30,15 +37,24 @@ Sitio del CII.IA (Centro de Innovación Industrial en Inteligencia Artificial). 
 
 ## Movimiento
 
-- Dos capas: Motion para entradas y microinteracciones de componentes; GSAP + ScrollTrigger (`src/motion/gsap.ts`) para todo lo ligado al scroll y el 3D.
-- Toda animación de scroll se registra con `useGSAP` (con `scope`) dentro de `gsap.matchMedia(MOTION)`. Con `prefers-reduced-motion: reduce` no se crea ninguna; `MotionConfig reducedMotion="user"` cubre Motion.
+- Tres capas: Lenis (`src/motion/SmoothScroll.tsx`) para el scroll suave, GSAP + ScrollTrigger (`src/motion/gsap.ts`) para todo lo ligado al scroll y el 3D, y Motion para entradas y microinteracciones de componentes.
+- Lenis va conectado al ticker de GSAP y a `ScrollTrigger.update`. Mueve el scroll nativo, así que `sticky` y `fixed` siguen funcionando. Para desplazar por código usar `useLenis()`, no `window.scrollTo`.
+- **Cuidado con el puente de Lenis.** La conexión con el ticker vive en un componente hijo de `ReactLenis` que toma la instancia con `useLenis()` (ver `SmoothScroll.tsx`). Si se hace con una `ref` desde el mismo componente que renderiza `ReactLenis`, el ticker puede quedar apuntando a una instancia que no es la viva: Lenis cancela la rueda con `preventDefault` y la página deja de moverse por completo. Al probar el scroll hay que usar eventos de rueda reales; `window.scrollTo` no pasa por ese camino y oculta el fallo.
+- Opciones de Lenis: solo `lerp` (hoy `0.12`), nunca `lerp` y `duration` a la vez. Subir `lerp` hace el scroll más inmediato; bajarlo, más deslizante.
+- Toda animación de scroll se registra con `useGSAP` (con `scope`) dentro de `gsap.matchMedia(MOTION)`. Con `prefers-reduced-motion: reduce` no se crea ninguna, Lenis no se monta y el campo 3D no existe; `MotionConfig reducedMotion="user"` cubre Motion.
 - No animar con GSAP un elemento que ya anima Motion: envolverlo y animar el contenedor. Para 3D usar `transformPerspective`; animar solo transform y opacity.
-- El scroll 3D vive solo en: hero de inicio, titular «última milla», ciclo, índice de soluciones, evidencia (único pin, solo escritorio), bandas CTA, títulos de página, principios y sede en Nosotros, y marca del pie. No extenderlo a otras secciones sin una razón narrativa.
-- Kit recuperado en `components/`. Integrados: `CursorGrid`, `Strands`, `LaserFlow`, `CobeGlobe`, `DepthText` y `3d-card`. Los que dependen de fotos o logotipos (`ScrollExpand`, `HeroParallax`, `TiltedCard`, galerías) esperan material real: no usarlos con imágenes de stock.
-- Efectos WebGL pesados con `lazy` y solo si `useMotionPreferences().richEffects`.
+- Reveals de texto con `SplitReveal` (SplitText por líneas, con máscara). No partir párrafos largos: solo títulos.
+- El scroll 3D vive solo en: acto oscuro de inicio (campo WebGL + hero + manifiesto), índice de soluciones, evidencia (único pin, solo escritorio), bandas CTA, títulos de página, principios y sede en Nosotros, y marca del pie. No extenderlo a otras secciones sin una razón narrativa.
+- `src/three/HeroField.tsx` es el campo de puntos del acto oscuro: dos posiciones por punto interpoladas en el vertex shader, cámara movida por el progreso del scroll y `frameloop` apagado fuera del acto. Si crece, mantener el morfeo en la GPU.
+- Kit en `components/`. Integrados hoy: `LaserFlow` (banda CTA de inicio), `CobeGlobe` (Nosotros), `DepthText` (pie) y `3d-card` (evidencia). `CursorGrid` y `Strands` quedaron fuera del hero al llegar el campo 3D. Los que dependen de fotos o logotipos (`ScrollExpand`, `HeroParallax`, `TiltedCard`, galerías) esperan material real: no usarlos con imágenes de stock.
+- Efectos WebGL pesados con `lazy` y solo si `useMotionPreferences().richEffects` (escritorio sin movimiento reducido).
 
 ## Skills del proyecto (`.claude/skills/`)
 
 - `frontend-design` (Anthropic): cargarla antes de diseñar o rediseñar una página o componente.
 - `web-design-guidelines` (Vercel): auditoría de accesibilidad y UX sobre los archivos modificados.
-- `webapp-testing` (Anthropic): capturas y pruebas con Playwright en escritorio y móvil contra `npm run dev`.
+- `webapp-testing` (Anthropic): capturas y pruebas con Playwright en escritorio y móvil.
+- `awwwards-animations`: patrones de scroll premium, Lenis, cursor y transiciones de página.
+- `gsap-*` (GreenSock, oficiales): `gsap-core`, `gsap-scrolltrigger`, `gsap-timeline`, `gsap-react`, `gsap-plugins`, `gsap-utils`, `gsap-performance`, `gsap-frameworks`.
+- `threejs-*` (11 skills): fundamentos, geometría, materiales, shaders, animación, interacción, post-procesado y demás, para trabajar `src/three/`.
+- `design-dna`: identidad visual en tres dimensiones. El perfil del sitio vive en `docs/design-dna.json` y es la referencia para nuevas piezas y assets; actualizarlo cuando cambie el sistema visual.

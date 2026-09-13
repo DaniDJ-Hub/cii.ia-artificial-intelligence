@@ -1,8 +1,8 @@
 import { useRef, type ReactNode } from 'react';
 import { Link } from 'react-router';
-import { motion } from 'motion/react';
 import { cn } from '../lib/cn';
 import { MOTION, gsap, headerOffset, useGSAP, type MotionConditions } from '../motion/gsap';
+import { SplitReveal } from '../motion/SplitReveal';
 
 type Crumb = { to: string; label: string };
 
@@ -72,17 +72,17 @@ export function PageIntro({ title, lead, breadcrumb, size = 'xl', children }: Pa
       )}
 
       <div data-intro-title>
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        <SplitReveal
+          as="h1"
+          mode="load"
+          delay={0.05}
           className={cn(
             'display',
             size === 'xl' ? 'text-[clamp(2.75rem,8vw,7rem)]' : 'max-w-[22ch] text-[clamp(2rem,5vw,4.5rem)]',
           )}
         >
           {title}
-        </motion.h1>
+        </SplitReveal>
       </div>
 
       {lead && (

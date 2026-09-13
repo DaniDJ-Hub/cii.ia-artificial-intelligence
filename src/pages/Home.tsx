@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, type ReactNode } from 'react';
+import { lazy, Suspense, useRef } from 'react';
 import { motion } from 'motion/react';
 import { CardBody, CardContainer } from '../../components/ui/3d-card';
 import {
@@ -12,6 +12,7 @@ import { formatFigure } from '../lib/text';
 import { usePageTitle } from '../lib/usePageTitle';
 import { MOTION, gsap, headerOffset, useGSAP, type MotionConditions } from '../motion/gsap';
 import { Magnetic } from '../motion/Magnetic';
+import { SplitReveal } from '../motion/SplitReveal';
 import { useMotionPreferences } from '../motion/useMotionPreferences';
 import { CtaBand } from '../ui/CtaBand';
 import { CycleTrack } from '../ui/CycleTrack';
@@ -20,21 +21,20 @@ import { ButtonLink, TextLink } from '../ui/links';
 import { Reveal } from '../ui/Reveal';
 import { ServiceIndex } from '../ui/ServiceIndex';
 
-const CursorGrid = lazy(() => import('../../components/effects/CursorGrid'));
-const Strands = lazy(() => import('../../components/effects/Strands'));
+const HeroField = lazy(() => import('../three/HeroField'));
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const SECTION_TITLE = 'display text-[clamp(2rem,4.6vw,4rem)]';
 
 /**
- * Landing: solo lo esencial. Qué es, qué hace, soluciones, una prueba,
- * respaldo institucional y contacto. Todo lo demás vive en su página.
+ * Landing en dos actos.
  *
- * Narrativa de scroll (GSAP + ScrollTrigger):
- *   hero → la retícula se vuelve un piso 3D y el titular retrocede
- *   última milla → las dos líneas entran desde el fondo
- *   ciclo → cada etapa llega en profundidad, junto con la línea de Motion
- *   evidencia → la sección se fija mientras las cifras avanzan (escritorio)
+ * Acto oscuro (hero + manifiesto): un campo de puntos en WebGL persiste detrás
+ * de ambas secciones. Al avanzar el scroll la cámara entra en el campo y los
+ * puntos pasan de dispersos a retícula: de la idea a la operación.
+ *
+ * Acto claro (soluciones, evidencia, respaldo): tipografía, filetes e índices.
+ * La única sección fijada del sitio es la evidencia, y solo en escritorio.
  */
 export function Home() {
   usePageTitle();
@@ -50,41 +50,44 @@ export function Home() {
       mm.add(MOTION, (context) => {
         const { desktop } = context.conditions as MotionConditions;
         const hero = q('[data-hero]')[0];
+        const act = q('[data-act="navy"]')[0];
 
-        // Hero: tres capas a distinta velocidad. La retícula se inclina como un
-        // piso que se aleja, el titular retrocede y el texto delantero sale antes.
+        // Hero: el texto delantero sale antes que el titular. La diferencia de
+        // velocidad es la que crea la profundidad, no una sombra.
         gsap
           .timeline({
             defaults: { ease: 'none' },
             scrollTrigger: { trigger: hero, start: () => `top ${headerOffset()}px`, end: 'bottom top', scrub: 0.6 },
           })
           .to(
-            q('[data-hero-grid]'),
-            {
-              transformPerspective: 1100,
-              transformOrigin: '50% 100%',
-              rotateX: desktop ? 60 : 30,
-              yPercent: desktop ? 18 : 8,
-              scale: desktop ? 1.35 : 1.1,
-              autoAlpha: 0.25,
-            },
-            0,
-          )
-          .to(
             q('[data-hero-title]'),
             {
               transformPerspective: 1100,
               transformOrigin: '50% 0%',
-              yPercent: desktop ? 12 : 6,
-              z: desktop ? -200 : -60,
+              yPercent: desktop ? 14 : 8,
+              z: desktop ? -220 : -70,
               rotateX: desktop ? 12 : 4,
-              autoAlpha: 0.15,
+              autoAlpha: 0.1,
             },
             0,
           )
           // opacity y no autoAlpha: los botones del hero siguen siendo enfocables.
-          .to(q('[data-hero-front]'), { yPercent: desktop ? -35 : -20, opacity: 0 }, 0)
-          .to(q('[data-hero-strands]'), { yPercent: 30, autoAlpha: 0 }, 0);
+          .to(q('[data-hero-front]'), { yPercent: desktop ? -40 : -22, opacity: 0 }, 0);
+
+        // La retícula estática cede protagonismo al campo 3D.
+        gsap.to(q('[data-lattice]'), {
+          autoAlpha: 0.3,
+          ease: 'none',
+          scrollTrigger: { trigger: act, start: 'top top', end: '45% top', scrub: 0.6 },
+        });
+
+        // Indicador de scroll: recorre su carril y desaparece al empezar a leer.
+        gsap.to(q('[data-scroll-hint]'), {
+          yPercent: 260,
+          repeat: -1,
+          duration: 1.7,
+          ease: 'power2.inOut',
+        });
 
         // «El problema no es la IA»: las dos líneas giran desde el fondo.
         gsap.from(q('[data-problem-line]'), {
@@ -151,130 +154,131 @@ export function Home() {
 
   return (
     <div ref={rootRef}>
-      <section id={HERO_ID} data-hero data-tone="navy" className="relative isolate overflow-hidden bg-navy text-white">
-        {!reducedMotion && (
-          <div data-hero-grid aria-hidden="true" className="absolute inset-0 -z-10">
-            <Suspense fallback={null}>
-              <CursorGrid
-                cellSize={72}
-                color="#5CA9DB"
-                radius={200}
-                maxOpacity={0.4}
-                gridOpacity={0.07}
-                clickPulse={false}
-              />
-            </Suspense>
+      {/* ------------------------------ ACTO OSCURO ------------------------------ */}
+      <div data-act="navy" data-tone="navy" className="relative isolate bg-navy text-white">
+        {/* Fondo del acto: el contenedor absoluto lo acota a este bloque y el
+            hijo pegado lo mantiene en pantalla mientras dura el acto. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-clip">
+          <div className="sticky top-0 h-[100svh]">
+            <div data-lattice className="hero-lattice absolute inset-0" />
+            <div className="hero-horizon absolute inset-x-0 bottom-0 h-1/2" />
+            {richEffects && (
+              <Suspense fallback={null}>
+                <HeroField trigger="[data-act='navy']" />
+              </Suspense>
+            )}
+            {/* Velo que garantiza el contraste del texto sobre el campo. */}
+            <div className="absolute inset-0 bg-navy/35" />
           </div>
-        )}
-        {richEffects && (
-          <div
-            data-hero-strands
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 -bottom-[30%] -z-10 h-[60%] opacity-70"
-          >
-            <Suspense fallback={null}>
-              <Strands
-                colors={['#5CA9DB', '#29729F', '#A9C3D4']}
-                count={3}
-                speed={0.22}
-                amplitude={0.55}
-                thickness={0.5}
-                glow={1.8}
-                intensity={0.4}
-                opacity={0.6}
-                scale={1.7}
-              />
-            </Suspense>
-          </div>
-        )}
+        </div>
 
-        {/* El texto deja pasar el puntero para que la retícula responda debajo. */}
-        <div className="container-site pointer-events-none pb-16 pt-12 sm:pb-20 sm:pt-20 lg:pb-28 lg:pt-24">
-          <div data-hero-front>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              className="max-w-[40ch] text-mist"
-            >
-              Centro de Innovación Industrial en Inteligencia Artificial
-            </motion.p>
-          </div>
+        <section id={HERO_ID} data-hero className="relative flex min-h-[100svh] flex-col justify-center">
+          <div className="container-site pb-14 pt-24 sm:pt-28">
+            <div data-hero-front>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6 }}
+                className="max-w-[40ch] text-mist"
+              >
+                Centro de Innovación Industrial en Inteligencia Artificial
+              </motion.p>
+            </div>
 
-          <div data-hero-title>
-            <h1 className="display mt-6 text-[clamp(2.25rem,7.6vw,7.25rem)] sm:mt-8">
-              <HeroLine delay={0.05}>Inteligencia</HeroLine>
-              <HeroLine delay={0.13}>artificial,</HeroLine>
-              <HeroLine delay={0.21}>de la idea a</HeroLine>
-              <HeroLine delay={0.29}>
+            <div data-hero-title>
+              <SplitReveal
+                as="h1"
+                mode="load"
+                delay={0.15}
+                className="display mt-6 text-[clamp(2.25rem,7.6vw,7.25rem)] sm:mt-8"
+              >
+                {/* Los saltos son deliberados; el espacio antes de cada uno mantiene
+                    legible el nombre accesible que SplitText toma del texto. */}
+                Inteligencia <br />
+                artificial, <br />
+                de la idea a <br />
                 la operación<span className="brand-dot">.</span>
-              </HeroLine>
-            </h1>
+              </SplitReveal>
+            </div>
+
+            <div data-hero-front>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.9, ease: EASE }}
+                className="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-12 lg:items-end"
+              >
+                <p className="max-w-[58ch] text-lg leading-relaxed text-mist sm:text-xl lg:col-span-7">
+                  Acompañamos a empresas e instituciones desde la estrategia hasta la solución operando, con laboratorio
+                  propio en el Parque de Investigación e Innovación Tecnológica (PIIT) de Nuevo León, formación
+                  especializada y una red de más de 50 organizaciones aliadas.
+                </p>
+                <div className="flex flex-wrap gap-3 lg:col-span-5 lg:justify-end">
+                  <Magnetic>
+                    <ButtonLink to="/contacto" tone="sky">
+                      Hablar con el equipo
+                    </ButtonLink>
+                  </Magnetic>
+                  <Magnetic strength={0.18}>
+                    <ButtonLink to="/soluciones" tone="outline-light">
+                      Ver soluciones
+                    </ButtonLink>
+                  </Magnetic>
+                </div>
+              </motion.div>
+            </div>
           </div>
 
-          <div data-hero-front>
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.6, ease: EASE }}
-              className="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-12 lg:items-end"
-            >
-              <p className="max-w-[58ch] text-lg leading-relaxed text-mist sm:text-xl lg:col-span-7">
-                Acompañamos a empresas e instituciones desde la estrategia hasta la solución operando, con laboratorio
-                propio en el Parque de Investigación e Innovación Tecnológica (PIIT) de Nuevo León, formación
-                especializada y una red de más de 50 organizaciones aliadas.
+          {!reducedMotion && (
+            <div data-hero-front className="container-site pb-10">
+              <p className="flex items-center gap-3 text-sm text-mist">
+                <span aria-hidden="true" className="relative block h-10 w-px overflow-hidden bg-white/25">
+                  <span data-scroll-hint className="absolute inset-x-0 top-0 block h-4 bg-sky" />
+                </span>
+                Desplázate
               </p>
-              <div className="pointer-events-auto flex flex-wrap gap-3 lg:col-span-5 lg:justify-end">
-                <Magnetic>
-                  <ButtonLink to="/contacto" tone="sky">
-                    Hablar con el equipo
-                  </ButtonLink>
-                </Magnetic>
-                <Magnetic strength={0.18}>
-                  <ButtonLink to="/soluciones" tone="outline-light">
-                    Ver soluciones
-                  </ButtonLink>
-                </Magnetic>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+            </div>
+          )}
+        </section>
 
-      <section aria-labelledby="que-hacemos" className="container-site py-20 sm:py-28 lg:py-32">
-        <div className="grid gap-8 lg:grid-cols-12 lg:gap-y-12">
-          <h2 id="que-hacemos" className={`${SECTION_TITLE} lg:col-span-12`}>
-            <span data-problem-line className="block">
-              El problema no es la IA.
-            </span>
-            <span data-problem-line className="block">
-              Es la última milla.
-            </span>
-          </h2>
-          <div className="space-y-5 text-lg leading-relaxed lg:col-span-6 lg:col-start-7">
-            <p>
-              Solo el 5% de las empresas de Nuevo León, principalmente trasnacionales, cuenta con equipos internos de
-              ciencia de datos. Al resto no le falta otra prueba de concepto: le falta recorrer el tramo que va del
-              piloto a la operación.
-            </p>
-            <p className="text-graphite">
-              El CII.IA acompaña ese tramo completo en cinco etapas, desde decidir qué merece construirse hasta dejar la
-              capacidad instalada en tu organización.
-            </p>
-            <TextLink to="/soluciones#ciclo">Cómo funciona cada etapa</TextLink>
+        <section aria-labelledby="que-hacemos" className="container-site pb-24 pt-6 sm:pb-32 lg:pb-40">
+          <div className="grid gap-8 lg:grid-cols-12 lg:gap-y-12">
+            <h2 id="que-hacemos" className={`${SECTION_TITLE} lg:col-span-12`}>
+              <span data-problem-line className="block">
+                El problema no es la IA.
+              </span>
+              <span data-problem-line className="block">
+                Es la última milla.
+              </span>
+            </h2>
+            <div className="space-y-5 text-lg leading-relaxed lg:col-span-6 lg:col-start-7">
+              <p>
+                Solo el 5% de las empresas de Nuevo León, principalmente trasnacionales, cuenta con equipos internos de
+                ciencia de datos. Al resto no le falta otra prueba de concepto: le falta recorrer el tramo que va del
+                piloto a la operación.
+              </p>
+              <p className="text-mist">
+                El CII.IA acompaña ese tramo completo en cinco etapas, desde decidir qué merece construirse hasta dejar
+                la capacidad instalada en tu organización.
+              </p>
+              <TextLink to="/soluciones#ciclo">Cómo funciona cada etapa</TextLink>
+            </div>
           </div>
-        </div>
-        <div data-cycle className="mt-16 lg:mt-24">
-          <CycleTrack />
-        </div>
-      </section>
+          <div data-cycle className="mt-16 lg:mt-24">
+            <CycleTrack tone="navy" />
+          </div>
+        </section>
+      </div>
 
-      <section aria-labelledby="soluciones" className="border-t border-rule">
+      {/* ------------------------------- ACTO CLARO ------------------------------ */}
+      {/* `relative` en el acto claro: el acto oscuro es un contexto de
+          apilamiento posicionado y, sin esto, su fondo se pintaría encima. */}
+      <section aria-labelledby="soluciones" className="relative bg-paper">
         <div className="container-site py-20 sm:py-28 lg:py-32">
           <div className="mb-12 flex flex-wrap items-end justify-between gap-6 lg:mb-16">
-            <h2 id="soluciones" className={SECTION_TITLE}>
-              Soluciones
-            </h2>
+            <SplitReveal as="h2" className={SECTION_TITLE}>
+              <span id="soluciones">Soluciones</span>
+            </SplitReveal>
             <p className="max-w-[44ch] text-lg text-graphite">
               Cinco líneas de trabajo, de la estrategia a la formación del equipo interno.
             </p>
@@ -283,13 +287,13 @@ export function Home() {
         </div>
       </section>
 
-      <section data-evidence aria-labelledby="evidencia" className="bg-surface">
+      <section data-evidence aria-labelledby="evidencia" className="relative bg-surface">
         <div className="container-site grid gap-14 py-20 sm:py-28 lg:grid-cols-12 lg:py-32">
           <div className="lg:col-span-5">
             <p className="text-graphite">Caso documentado en manufactura</p>
-            <h2 id="evidencia" className={`${SECTION_TITLE} mt-4`}>
-              {featured.title}
-            </h2>
+            <SplitReveal as="h2" className={`${SECTION_TITLE} mt-4`}>
+              <span id="evidencia">{featured.title}</span>
+            </SplitReveal>
             <p className="mt-6 text-lg leading-relaxed">
               {featured.challenge} {featured.approach}
             </p>
@@ -321,12 +325,12 @@ export function Home() {
         </div>
       </section>
 
-      <section aria-labelledby="institucion" className="container-site py-20 sm:py-28 lg:py-32">
+      <section aria-labelledby="institucion" className="container-site relative bg-paper py-20 sm:py-28 lg:py-32">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <h2 id="institucion" className={SECTION_TITLE}>
-              Gobierno, academia e industria
-            </h2>
+            <SplitReveal as="h2" className={SECTION_TITLE}>
+              <span id="institucion">Gobierno, academia e industria</span>
+            </SplitReveal>
             <p className="mt-6 text-lg leading-relaxed">
               El CII.IA se inauguró en 2021 en el PIIT, Nuevo León, dentro del programa federal de Centros de
               Innovación Industrial. Hoy articula un ecosistema de más de 50 organizaciones.
@@ -361,20 +365,5 @@ export function Home() {
         effect="laser"
       />
     </div>
-  );
-}
-
-function HeroLine({ children, delay }: { children: ReactNode; delay: number }) {
-  return (
-    <span className="-mb-[0.08em] block overflow-hidden pb-[0.08em]">
-      <motion.span
-        className="block"
-        initial={{ y: '110%' }}
-        animate={{ y: '0%' }}
-        transition={{ duration: 0.95, delay, ease: EASE }}
-      >
-        {children}
-      </motion.span>
-    </span>
   );
 }

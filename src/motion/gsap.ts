@@ -1,8 +1,9 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
 import { useGSAP } from '@gsap/react';
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 ScrollTrigger.config({ ignoreMobileResize: true });
 
 /**
@@ -19,4 +20,4 @@ export type MotionConditions = Record<keyof typeof MOTION, boolean>;
 /** Alto del encabezado sticky: los pins y los inicios se calculan debajo de él. */
 export const headerOffset = () => document.querySelector<HTMLElement>('header')?.offsetHeight ?? 0;
 
-export { gsap, ScrollTrigger, useGSAP };
+export { gsap, ScrollTrigger, SplitText, useGSAP };

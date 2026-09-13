@@ -1,0 +1,282 @@
+{
+  "meta": {
+    "name": "CII.IA · Design DNA",
+    "description": "Identidad visual del sitio del Centro de Innovación Industrial en Inteligencia Artificial. Institucional y técnica, en dos actos: un acto oscuro inmersivo de apertura y un acto claro editorial para el contenido. Perfil extraído de la implementación, no de una referencia externa.",
+    "source_references": [
+      "ciiia.mx/brandguide (manual de identidad: marino como color de poder, títulos en mayúsculas, familia Source, Aldrich para cifras)",
+      "src/index.css (@theme: valores exactos de color, tipografía y easing)",
+      "src/pages/Home.tsx, src/three/HeroField.tsx, src/motion/ (implementación de movimiento y efectos)"
+    ],
+    "created_at": "2026-09-12"
+  },
+  "design_system": {
+    "color": {
+      "palette_type": "monochromatic",
+      "primary": { "hex": "#0b2a43", "role": "Color de poder de la marca. Fondo del acto oscuro, encabezado sobre ese acto, bandas de llamada a la acción y botones sólidos sobre fondo claro." },
+      "secondary": { "hex": "#29729f", "role": "Interacción sobre fondo claro: enlaces al pasar el cursor, líneas de progreso del ciclo, bordes de foco y estados activos." },
+      "accent": { "hex": "#5ca9db", "role": "Único acento luminoso. Reservado para fondo marino: botón principal, punto de la marca, barra de progreso y la línea de barrido del campo 3D." },
+      "neutral": {
+        "scale": ["#ffffff", "#eef1f3", "#cbd3d9", "#a9c3d4", "#56626c", "#0e1a24", "#071d2f"],
+        "usage": "#ffffff es la superficie elevada del acto claro y el texto sobre marino; #eef1f3 es el papel de fondo; #cbd3d9 son los filetes; #a9c3d4 es el texto secundario sobre marino; #56626c es el texto secundario sobre papel; #0e1a24 es la tinta del texto principal; #071d2f cierra el pie y la cortina de transición."
+      },
+      "semantic": {
+        "success": "no definido: el sitio no comunica estados de éxito",
+        "warning": "no definido: no hay advertencias en la interfaz",
+        "error": "no definido: la validación del formulario usa el mensaje nativo del navegador",
+        "info": "#29729f"
+      },
+      "surface": { "background": "#eef1f3", "card": "#ffffff", "elevated": "#0b2a43" },
+      "contrast_strategy": "Inversión por actos. El acto oscuro usa blanco y niebla sobre marino; el claro, tinta sobre papel. Todo texto se mantiene sobre AA: el campo 3D lleva un velo marino al 35% para que nunca reduzca el contraste del titular."
+    },
+    "typography": {
+      "type_scale": {
+        "display": { "size": "clamp(2.25rem, 7.6vw, 7.25rem)", "weight": "700", "line_height": "0.96", "tracking": "-0.012em" },
+        "heading_1": { "size": "clamp(2.75rem, 8vw, 7rem)", "weight": "700", "line_height": "0.96", "tracking": "-0.012em" },
+        "heading_2": { "size": "clamp(2rem, 4.6vw, 4rem)", "weight": "700", "line_height": "0.96", "tracking": "-0.012em" },
+        "heading_3": { "size": "1.125rem", "weight": "600", "line_height": "1.4", "tracking": "0" },
+        "body": { "size": "1.0625rem", "weight": "400", "line_height": "1.6", "tracking": "0" },
+        "body_small": { "size": "0.95rem", "weight": "400", "line_height": "1.5", "tracking": "0" },
+        "caption": { "size": "0.875rem", "weight": "400", "line_height": "1.45", "tracking": "0" },
+        "overline": { "size": "0.875rem", "weight": "400", "line_height": "1.4", "tracking": "0" }
+      },
+      "font_families": {
+        "heading": "\"Bw Aleta\", \"Archivo\" (ancho expandido 116% desde 40rem), sans-serif",
+        "body": "\"Source Sans 3\", sans-serif; citas en \"Source Serif 4\"",
+        "mono": "\"Source Code Pro\", monospace; cifras destacadas en \"Aldrich\""
+      },
+      "font_style_notes": "Grotesca industrial en ancho expandido y siempre en mayúsculas para títulos, según el manual de marca; humanista para lectura. El ancho vuelve a 100% en móvil para que las palabras largas no desborden. Las cifras usan Aldrich con tabular-nums para que las columnas cuadren. No se usan etiquetas monoespaciadas en mayúsculas sobre los títulos."
+    },
+    "spacing": {
+      "base_unit": "0.25rem",
+      "scale": ["0.25rem", "0.5rem", "0.75rem", "1rem", "1.5rem", "2rem", "2.5rem", "3.5rem", "5rem", "7rem", "8rem"],
+      "content_density": "spacious",
+      "section_rhythm": "Secciones de 5rem a 8rem de aire vertical, crecientes con el ancho de pantalla. El acto oscuro respira más (hero a pantalla completa) y el acto claro mantiene un pulso regular entre bloques."
+    },
+    "layout": {
+      "grid_system": "Rejilla de 12 columnas dentro de un contenedor central",
+      "max_content_width": "88rem",
+      "columns": "12",
+      "gutter": "clamp(1.25rem, 4vw, 3rem) de margen lateral; 1.5rem a 2rem entre columnas",
+      "breakpoints": ["40rem", "48rem", "64rem", "80rem"],
+      "alignment_tendency": "asymmetric"
+    },
+    "shape": {
+      "border_radius": { "small": "2px", "medium": "3px", "large": "3px", "pill": "9999px" },
+      "border_usage": "subtle 1px",
+      "divider_style": "Filete de 1px en #cbd3d9 entre filas de índices y listas; filete en tinta para abrir bloques; sobre marino, blanco al 15-20%."
+    },
+    "elevation": {
+      "shadow_style": "none",
+      "levels": {
+        "low": "Filete inferior de 1px en el encabezado al pisar el acto claro",
+        "medium": "Relleno de superficie (#ffffff) al pasar el cursor sobre una fila de índice",
+        "high": "Cambio de acto: el fondo marino completo separa planos"
+      },
+      "depth_cues": "Profundidad por movimiento y capas, no por sombras: parallax a distintas velocidades, translateZ con perspectiva, campo 3D al fondo y superposición de actos."
+    },
+    "iconography": {
+      "style": "Lineal, geométrico, sin relleno",
+      "stroke_weight": "1.5px",
+      "size_scale": ["1rem", "1.25rem", "1.5rem"],
+      "preferred_set": "lucide-react, solo para navegación y dirección (flechas, menú, cerrar); nunca como decoración de sección"
+    },
+    "motion": {
+      "easing": "cubic-bezier(0.25, 1, 0.5, 1) para interfaz; power4.out en reveals de texto; power3.inOut en la cortina de ruta; ease 'none' en todo lo ligado al scroll",
+      "duration_scale": { "micro": "200-300ms", "normal": "300-500ms", "macro": "700-1000ms" },
+      "entrance_pattern": "Revelado por líneas: cada línea de título sube desde su propia máscara con escalonado de 80ms. El contenido llega desde la profundidad, no desde un desplazamiento plano.",
+      "exit_pattern": "El texto delantero sale antes que el titular al abandonar el hero; la cortina marina se levanta desde arriba al cambiar de ruta.",
+      "philosophy": "cinematic"
+    },
+    "components": {
+      "button_style": "Rectángulo casi recto (3px), sólido marino sobre claro y cielo sobre marino; variante de contorno con sombra interior; los principales tienen atracción magnética al cursor.",
+      "input_style": "Campo de 3rem sobre superficie blanca con sombra interior de 1px; el foco engrosa a 2px en acero, sin anillo exterior.",
+      "card_style": "Casi ausente por decisión: el contenido vive en filas e índices. La única excepción es el panel de cifras del caso destacado, que se inclina con el cursor.",
+      "navigation_pattern": "Encabezado pegado que cambia de tono según el acto, con indicador animado de página, barra de progreso de lectura y menú a pantalla completa en móvil.",
+      "modal_style": "No hay modales. El detalle vive en su propia ruta.",
+      "list_style": "Índices con filete: categoría, nombre en display y descripción; al pasar el cursor la fila se rellena desde la izquierda y la flecha se desplaza.",
+      "component_notes": "El sistema evita rejillas de tarjetas idénticas, glassmorphism y gradientes decorativos: la jerarquía la construyen la escala tipográfica, los filetes y el espacio."
+    }
+  },
+  "design_style": {
+    "aesthetic": {
+      "mood": ["institucional", "técnico", "sereno", "premium", "futurista contenido"],
+      "visual_metaphor": "Un campo de datos dispersos que se ordena hasta volverse un sistema que opera: la última milla entre el piloto y la planta.",
+      "era_influence": "Modernismo suizo aplicado a interfaz técnica contemporánea",
+      "genre": "sitio institucional de centro de investigación aplicada",
+      "personality_traits": ["riguroso", "directo", "sobrio", "seguro de sí"],
+      "adjectives": ["editorial", "industrial", "frío", "amplio", "deliberado"]
+    },
+    "visual_language": {
+      "complexity": "minimal",
+      "ornamentation": "subtle accents",
+      "whitespace_usage": "Generoso y estructural: el aire separa ideas y marca el ritmo de lectura.",
+      "visual_weight_distribution": "Titulares enormes a la izquierda contra texto de lectura a la derecha; el peso cae en la tipografía, no en bloques de color.",
+      "focal_strategy": "progressive reveal",
+      "contrast_level": "alto en tipografía, bajo en fondo",
+      "texture_usage": "Solo dos texturas: la retícula de la apertura y el campo de puntos. Ambas al fondo y por debajo del texto."
+    },
+    "composition": {
+      "hierarchy_method": "scale contrast",
+      "balance_type": "asymmetric",
+      "flow_direction": "Vertical con diagonal de lectura: título a la izquierda, desarrollo a la derecha.",
+      "grouping_strategy": "Filetes y columnas compartidas; nada de cajas con sombra.",
+      "negative_space_role": "Estructural: el vacío es lo que separa los bloques, no una línea decorativa."
+    },
+    "imagery": {
+      "photo_treatment": "Sin fotografía. El manual de marca pide blanco y negro en tonos fríos; hasta tener material real del PIIT no se usa ninguna imagen.",
+      "illustration_style": "Ninguna ilustración figurativa",
+      "graphic_elements": "El punto de la marca, la línea del ciclo de cinco etapas, el globo de la sede y el campo de puntos",
+      "pattern_usage": "Retícula sutil de 48-72px solo en el acto oscuro",
+      "image_shape": "Rectángulo recto cuando existan fotografías"
+    },
+    "interaction_feel": {
+      "feedback_style": "Inmediato y discreto: relleno de fila, desplazamiento de flecha, engrosado de foco",
+      "hover_behavior": "El fondo de la fila entra desde la izquierda y el título cambia a acero; los botones principales atraen ligeramente al cursor",
+      "transition_personality": "smooth glide",
+      "loading_style": "Sin pantallas de carga: los efectos pesados se cargan diferidos y el contenido nunca espera",
+      "microinteraction_density": "moderada, concentrada en navegación, índices y formulario"
+    },
+    "brand_voice_in_ui": {
+      "tone": "Directo y verificable, sin superlativos",
+      "formality": "Semiformal en español, con nombres de producto en inglés (spanglish del manual de marca)",
+      "cta_style": "direct imperative",
+      "empty_state_approach": "Explica qué pasó y ofrece la salida: «Ningún caso coincide con esa combinación de filtros» junto al botón para quitarlos",
+      "error_tone": "Neutro y accionable; nunca se disculpa ni culpa a la persona"
+    }
+  },
+  "visual_effects": {
+    "overview": {
+      "effect_intensity": "moderate",
+      "performance_tier": "heavy",
+      "fallback_strategy": "Degradado por capas: sin WebGL en móvil ni con movimiento reducido, donde queda la retícula CSS; con prefers-reduced-motion no se monta Lenis, ni el campo, ni los reveals, ni la cortina de ruta.",
+      "primary_technology": "GSAP + ScrollTrigger, con Three.js (React Three Fiber) para el campo y Lenis para el scroll"
+    },
+    "background_effects": {
+      "type": "generative-art",
+      "description": "Retícula CSS enmascarada en radial más un halo de horizonte sobre el marino; sostienen el acto oscuro cuando no hay WebGL.",
+      "technology": "CSS (linear-gradient + mask-image, radial-gradient)",
+      "params": {
+        "color_palette": ["#0b2a43", "#5ca9db", "rgba(255,255,255,0.055)"],
+        "speed": "estática; solo se atenúa con el scroll",
+        "density": "celda de 48px en móvil, 72px desde 40rem",
+        "opacity": "0.055 la retícula; 0.22 el halo",
+        "blend_mode": "normal"
+      }
+    },
+    "particle_systems": {
+      "enabled": true,
+      "type": "custom",
+      "description": "Campo de inspección: los puntos interpolan entre una nube dispersa y una retícula de cuatro capas según el progreso del scroll, recorridos por una línea de barrido que los enciende.",
+      "technology": "Three.js Points + ShaderMaterial (React Three Fiber)",
+      "params": {
+        "count": "5600 en escritorio ancho; 3600 por debajo de 1280px",
+        "shape": "disco circular recortado en el fragment shader",
+        "size_range": "≈1.5px a 5px según profundidad y barrido",
+        "movement_pattern": "Deriva senoidal por semilla, fuerte mientras están dispersos y casi nula al alinearse",
+        "color_behavior": "Mezcla de #2b6285 a #79b9e2 según cercanía a la línea de barrido",
+        "interaction": "mouse-attract suave: parallax amortiguado del puntero sobre el campo y la rotación",
+        "spawn_area": "Volumen de 19 × 11 × 11 unidades frente a la cámara"
+      }
+    },
+    "3d_elements": {
+      "enabled": true,
+      "type": "scene-bg",
+      "description": "Escena de fondo del acto oscuro con recorrido de cámara ligado al scroll: entra en el campo mientras los puntos se ordenan. El globo de la sede y la marca 3D del pie completan el uso de profundidad.",
+      "technology": "React Three Fiber (three r186); cobe para el globo; capas DOM con translateZ para la marca del pie",
+      "params": {
+        "renderer": "WebGL sin antialias, dpr limitado a [1, 1.6], frameloop apagado fuera del acto",
+        "lighting": "Ninguna: material sin iluminación con mezcla aditiva",
+        "camera": "Perspectiva de 46°, viaje de z 8.6 a 3.4 con leve elevación e inclinación",
+        "materials": "ShaderMaterial aditivo, sin escritura de profundidad",
+        "geometry": "BufferGeometry con atributos de posición dispersa, posición en retícula y semilla",
+        "post_processing": [],
+        "interaction_model": "Solo lectura: el lienzo no captura el puntero"
+      }
+    },
+    "shader_effects": {
+      "enabled": true,
+      "type": "morph",
+      "description": "El morfeo entre nube y retícula ocurre íntegro en la GPU: el vertex shader interpola las dos posiciones con suavizado y aplica la deriva y el barrido.",
+      "technology": "GLSL sobre ShaderMaterial",
+      "params": {
+        "uniforms": ["uTime", "uProgress", "uSize", "uScan", "uPointer", "uColor", "uAccent", "uOpacity"],
+        "vertex_manipulation": "mix(disperso, retícula) con smoothstep, deriva senoidal por semilla y parallax de puntero",
+        "fragment_output": "Disco con borde suave y alfa modulada por profundidad y barrido",
+        "noise_type": "ninguno: senoides por semilla, más barato y más controlable",
+        "distortion": "ninguna"
+      }
+    },
+    "scroll_effects": {
+      "parallax": {
+        "enabled": true,
+        "layers": "3",
+        "depth_range": "Campo 3D al fondo, titular retrocediendo con z negativa y texto delantero saliendo más rápido",
+        "speed_curve": "lineal ligada al scroll (ease 'none') con suavizado de 0.6s"
+      },
+      "scroll_triggered_animations": {
+        "enabled": true,
+        "trigger_points": "top 88-94% para entradas; top top para el acto oscuro; bottom bottom para la marca del pie",
+        "animation_type": "clip-reveal en títulos, rotación en profundidad en filas e hitos, escala de la línea del ciclo",
+        "scrub_behavior": "scrub de 0.5 a 0.8 segundos en todo lo ligado al scroll; once: true en los reveals de texto"
+      },
+      "scroll_morphing": {
+        "enabled": true,
+        "description": "El progreso del acto oscuro controla a la vez el morfeo del campo, el viaje de cámara y la atenuación de la retícula."
+      }
+    },
+    "text_effects": {
+      "type": "split-letter-animate",
+      "description": "Los títulos se parten por líneas con SplitText y cada línea sube desde su propia máscara; el nombre accesible queda en el elemento original.",
+      "technology": "GSAP SplitText",
+      "params": {
+        "split_strategy": "by-line",
+        "animation_per_unit": "yPercent 118 → 0 con power4.out",
+        "stagger": "0.08s",
+        "effect_style": "máscara por línea, sin glitch ni distorsión"
+      }
+    },
+    "cursor_effects": {
+      "enabled": true,
+      "type": "custom-cursor",
+      "description": "Anillo que sigue al cursor con retardo y crece sobre elementos interactivos. El cursor nativo permanece visible: acompaña, no sustituye.",
+      "params": {
+        "shape": "círculo de contorno de 2.25rem",
+        "size": "36px, ×1.85 sobre elementos interactivos",
+        "blend_mode": "difference",
+        "trail": "sin estela: interpolación de 0.45s con power3.out",
+        "interaction_zone": "a, button, input, textarea, select, label, summary y [role=tab]"
+      }
+    },
+    "image_effects": {
+      "type": "none",
+      "description": "El sitio no usa fotografía todavía; cuando llegue material real del PIIT, el kit ya tiene revelado por recorte y parallax con inclinación.",
+      "technology": "pendiente",
+      "params": { "filter_pipeline": "ninguno", "hover_transform": "ninguno", "reveal_animation": "ninguno", "distortion_type": "ninguno" }
+    },
+    "glassmorphism_neumorphism": {
+      "enabled": false,
+      "style": "none",
+      "params": { "blur_radius": "0", "transparency": "0", "border_treatment": "ninguno", "shadow_type": "ninguno", "light_source_angle": "ninguno" }
+    },
+    "canvas_drawings": {
+      "enabled": true,
+      "type": "generative-lines",
+      "description": "El haz de LaserFlow en la banda final y el globo de la sede son lienzos propios; el kit conserva además una retícula reactiva al cursor, hoy sin montar.",
+      "technology": "Three.js (LaserFlow), cobe (globo), Canvas 2D (CursorGrid, en reserva)",
+      "params": {
+        "draw_method": "shader a pantalla completa en el haz; rasterizado del globo por cobe",
+        "animation_loop": "requestAnimationFrame con pausa fuera de pantalla",
+        "color_scheme": ["#5ca9db", "#0b2a43", "#ffffff"],
+        "responsiveness": "ResizeObserver en ambos",
+        "interaction": "inclinación del haz con el puntero"
+      }
+    },
+    "svg_animations": {
+      "enabled": false,
+      "type": "none",
+      "description": "El movimiento vive en CSS, GSAP y WebGL; no hay animación SVG.",
+      "params": { "animation_method": "ninguno", "path_morphing": "ninguno", "stroke_animation": "ninguno", "filter_effects": "ninguno" }
+    },
+    "composite_notes": "Las capas se ordenan por prioridad de lectura: campo 3D al fondo, velo marino al 35% encima y contenido siempre por delante; la barra de progreso y el anillo del cursor van arriba de todo, sin capturar puntero. El acto oscuro es un contexto de apilamiento posicionado, así que las secciones claras que le siguen necesitan `relative` para pintarse por encima. Presupuesto de rendimiento: como mucho dos contextos WebGL simultáneos (campo y haz), ambos diferidos, solo en escritorio, con frameloop apagado fuera de pantalla y dpr limitado. Con prefers-reduced-motion el sitio queda completamente estático y legible, sin Lenis ni WebGL."
+  }
+}
